@@ -2,14 +2,103 @@
 
 [ext_resource type="Script" uid="uid://bj73p856krtlp" path="res://scenes/tts_bot/tts_bot.gd" id="1_eadi6"]
 [ext_resource type="Texture2D" uid="uid://clk521w4e2ra1" path="res://scenes/tts_bot/rooBot.png" id="1_qokg3"]
+[ext_resource type="Script" uid="uid://d2sq028o4matp" path="res://scenes/tts_bot/tts_controller.gd" id="3_bbau5"]
+[ext_resource type="Script" uid="uid://b1iyfvs5d27h1" path="res://scenes/tts_bot/tts_queue.gd" id="3_k5fp6"]
+[ext_resource type="Script" uid="uid://c23hqfitle0p7" path="res://scenes/tts_bot/tts_display.gd" id="3_owkjq"]
 
-[node name="TTSBot" type="Node2D" unique_id=1958780083 node_paths=PackedStringArray("shown_marker", "hidden_marker")]
-visible = false
+[node name="TTSBot" type="Node" unique_id=689248766 node_paths=PackedStringArray("queue", "display")]
 script = ExtResource("1_eadi6")
+queue = NodePath("TTSQueue")
+display = NodePath("TTSDisplay")
+
+[node name="TTSQueue" type="Node" parent="." unique_id=1897706859 node_paths=PackedStringArray("speaker")]
+script = ExtResource("3_k5fp6")
+speaker = NodePath("PhononSpeaker")
+metadata/_custom_type_script = "uid://b1iyfvs5d27h1"
+
+[node name="PhononSpeaker" type="PhononSpeaker" parent="TTSQueue" unique_id=119147440]
+voice = "Toby"
+player = NodePath("../AudioStreamPlayer")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="TTSQueue" unique_id=1994866821]
+
+[node name="TTSController" type="Control" parent="." unique_id=1249287879 node_paths=PackedStringArray("queue")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_bbau5")
+queue = NodePath("../TTSQueue")
+
+[node name="PanelContainer" type="PanelContainer" parent="TTSController" unique_id=491108932]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TTSController/PanelContainer" unique_id=286359024]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TTSController/PanelContainer/VBoxContainer" unique_id=1217838437]
+layout_mode = 2
+alignment = 1
+
+[node name="StopButton" type="Button" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer" unique_id=204746003]
+layout_mode = 2
+text = "Stop"
+
+[node name="PauseButton" type="Button" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer" unique_id=525348352]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Pause"
+
+[node name="SkipButton" type="Button" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer" unique_id=657390214]
+layout_mode = 2
+text = "Skip >>"
+
+[node name="HSeparator" type="HSeparator" parent="TTSController/PanelContainer/VBoxContainer" unique_id=1078042811]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="TTSController/PanelContainer/VBoxContainer" unique_id=1277042761]
+layout_mode = 2
+
+[node name="HistoryLabel" type="Label" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=330783549]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 256)
+custom_maximum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="VSeparator" type="VSeparator" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=218078339]
+layout_mode = 2
+
+[node name="PendingLabel" type="Label" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=994119095]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 256)
+custom_maximum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="TTSDisplay" type="Node2D" parent="." unique_id=1782285435 node_paths=PackedStringArray("shown_marker", "hidden_marker")]
+visible = false
+script = ExtResource("3_owkjq")
 shown_marker = NodePath("ShownMarker")
 hidden_marker = NodePath("HiddenMarker")
 
-[node name="UserLabel" type="RichTextLabel" parent="." unique_id=1784038669]
+[node name="Body" type="Sprite2D" parent="TTSDisplay" unique_id=1884277100]
+unique_name_in_owner = true
+texture = ExtResource("1_qokg3")
+
+[node name="ShownMarker" type="Marker2D" parent="TTSDisplay" unique_id=2065131660]
+position = Vector2(1720, 200)
+
+[node name="HiddenMarker" type="Marker2D" parent="TTSDisplay" unique_id=1077238090]
+position = Vector2(2120, 200)
+
+[node name="UserLabel" type="RichTextLabel" parent="TTSDisplay" unique_id=1784038669]
+unique_name_in_owner = true
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -32,7 +121,8 @@ autowrap_mode = 1
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="MessageLabel" type="RichTextLabel" parent="." unique_id=1252888608]
+[node name="MessageLabel" type="RichTextLabel" parent="TTSDisplay" unique_id=1252888608]
+unique_name_in_owner = true
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -49,17 +139,6 @@ fit_content = true
 scroll_active = false
 horizontal_alignment = 1
 
-[node name="ShownMarker" type="Marker2D" parent="." unique_id=2065131660]
-position = Vector2(1720, 200)
-
-[node name="HiddenMarker" type="Marker2D" parent="." unique_id=1077238090]
-position = Vector2(2120, 200)
-
-[node name="Body" type="Sprite2D" parent="." unique_id=1884277100]
-texture = ExtResource("1_qokg3")
-
-[node name="PhononSpeaker" type="PhononSpeaker" parent="." unique_id=119147440]
-voice = "Toby"
-player = NodePath("../AudioStreamPlayer")
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1994866821]
+[connection signal="pressed" from="TTSController/PanelContainer/VBoxContainer/HBoxContainer/StopButton" to="TTSController" method="_on_stop_button_pressed"]
+[connection signal="toggled" from="TTSController/PanelContainer/VBoxContainer/HBoxContainer/PauseButton" to="TTSController" method="_on_pause_button_toggled"]
+[connection signal="pressed" from="TTSController/PanelContainer/VBoxContainer/HBoxContainer/SkipButton" to="TTSController" method="_on_skip_button_pressed"]
