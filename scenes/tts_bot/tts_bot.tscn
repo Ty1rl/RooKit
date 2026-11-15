@@ -23,6 +23,7 @@ player = NodePath("../AudioStreamPlayer")
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="TTSQueue" unique_id=1994866821]
 
 [node name="TTSController" type="Control" parent="." unique_id=1249287879 node_paths=PackedStringArray("queue")]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0

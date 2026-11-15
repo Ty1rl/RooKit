@@ -12,8 +12,8 @@ var _test_messages: Array[String] = [
 
 
 func _ready() -> void:
-	var main: Node = get_parent()
-	main.subscription_message.received.connect(_on_subscription_message)
+	#var main: Node = get_parent()
+	#main.subscription_message.received.connect(_on_subscription_message)
 	
 	queue.message_started.connect(display.show_message)
 	queue.message_finished.connect(_on_message_finished)

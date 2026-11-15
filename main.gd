@@ -5,14 +5,24 @@ signal chat_connected(twitch_chat: TwitchChat)
 @export var twitch_chat: TwitchChat
 @export var subscription_message: TwitchEventListener
 
+@onready var exporter: SpectatorStreamExporter = %SpectatorStreamExporter
+@onready var spectator_sub_viewport: SubViewport = %SpectatorSubViewport
+@onready var preview: TextureRect = %Preview
 
 func _ready() -> void:
+	exporter.stream_error.connect(func(msg): push_warning("Spectator stream: " + msg))
+	exporter.active = true
+	
+	preview.texture = spectator_sub_viewport.get_texture()
+	
 	var user: TwitchUser = await _setup()
 	if not user:
 		return
 	
 	print("Connected Twitch account: %s (ID: %s)" % [user.display_name, user.id])
 	await _connect_chat(user)
+	
+	
 
 
 func _setup() -> TwitchUser:

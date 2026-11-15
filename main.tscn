@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://b0ig6mupxdg7r" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="3_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://gnhgtgwtbrp7" path="res://scenes/tts_bot/tts_bot.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://btxfuxlctuwyd" path="res://scenes/ui/scene_switcher.tscn" id="5_lquwl"]
 
 [node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("subscription_message")]
 script = ExtResource("1_0xm2m")
@@ -20,4 +20,54 @@ condition = {
 }
 metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
 
-[node name="TTSBot" parent="." unique_id=1958780083 instance=ExtResource("3_h2yge")]
+[node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574]
+target_viewport = NodePath("../SpectatorSubViewport")
+stream_name = "RooKit"
+target_fps = 60
+unique_name_in_owner = true
+
+[node name="SpectatorSubViewport" type="SubViewport" parent="." unique_id=1629419129]
+unique_name_in_owner = true
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="Control" type="Control" parent="." unique_id=1932269530]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control" unique_id=365521189]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="Control/HBoxContainer" unique_id=1729789778]
+layout_mode = 2
+current_tab = 0
+
+[node name="Scenes" parent="Control/HBoxContainer/TabContainer" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
+layout_mode = 2
+scene_parent = NodePath("../../../../SpectatorSubViewport")
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/HBoxContainer" unique_id=1202961168]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Preview" type="TextureRect" parent="Control/HBoxContainer/MarginContainer" unique_id=1844083776]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+expand_mode = 2
+stretch_mode = 5
