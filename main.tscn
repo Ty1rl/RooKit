@@ -1,3 +1,7 @@
 [gd_scene format=3 uid="uid://dolxlq4upgpel"]
 
+[ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_ig7tw"]
+
 [node name="Main" type="Node" unique_id=269133433]
+
+[node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_ig7tw")]

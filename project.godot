@@ -36,3 +36,5 @@ renderer/rendering_method="mobile"
 [twitcher]
 
 editor/show_setup_on_startup=false
+editor/game_oauth_token="res://twitch/twitch_oauth_token.tres"
+editor/game_oauth_setting="res://twitch/twitch_oauth_setting.tres"
