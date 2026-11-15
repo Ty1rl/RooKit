@@ -1,0 +1,537 @@
+@icon("res://addons/twitcher/assets/eventsub-icon.svg")
+@tool
+extends Twitcher
+
+## Handles the evensub part of twitch. Returns the event data when receives it.
+class_name TwitchEventsub
+
+## Twitch promises a frame at least every keepalive_timeout_seconds. This much longer silence
+## counts as a dead connection, the extra covers slow networks and long frames.
+const KEEPALIVE_GRACE: float = 1.5
+## Lower bound of the keepalive timeout in seconds, in case Twitch announces an unusable one.
+const MIN_KEEPALIVE_TIMEOUT_SECONDS: int = 10
+## The clients run before the eventsub, so everything that arrived is read before the watchdog
+## looks at the clock. Otherwise a long frame would look like silence.
+const CLIENT_PROCESS_PRIORITY: int = -1
+
+static var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
+
+static var instance: TwitchEventsub
+
+## An object that identifies the message.
+class Metadata extends RefCounted:
+	## An ID that uniquely identifies the message. Twitch sends messages at least once, but if Twitch is unsure of whether you received a notification, it’ll resend the message. This means you may receive a notification twice. If Twitch resends the message, the message ID is the same.
+	var message_id: String
+	## The type of message, which is set to session_keepalive.
+	var message_type: String
+	## The UTC date and time that the message was sent.
+	var message_timestamp: String
+
+	func _init(d: Dictionary):
+		message_id = d['message_id']
+		message_type = d['message_type']
+		message_timestamp = d['message_timestamp']
+
+
+## An object that contains information about the connection.
+class Session extends RefCounted:
+	## An ID that uniquely identifies this WebSocket connection. Use this ID to set the session_id field in all subscription requests.
+	var id: String
+	## The connection’s status, which is set to connected.
+	var status: String
+	## The maximum number of seconds that you should expect silence before receiving a keepalive message. For a welcome message, this is the number of seconds that you have to subscribe to an event after receiving the welcome message. If you don’t subscribe to an event within this window, the socket is disconnected.
+	var keepalive_timeout_seconds: int
+	## The URL to reconnect to if you get a Reconnect message. Is set to null.
+	var reconnect_url: String
+	## The UTC date and time that the connection was created.
+	var connected_at: String
+
+	func _init(d: Dictionary):
+		id = d["id"]
+		status = d["status"]
+		var timeout = d["keepalive_timeout_seconds"]
+		keepalive_timeout_seconds = timeout if timeout != null else 30
+		if d["reconnect_url"] != null:
+			reconnect_url = d["reconnect_url"]
+		connected_at = d["connected_at"]
+
+## A specific event received from eventsub
+class Event extends RefCounted:
+	# Resolved by type *and* version: channel.moderate, automod.message.hold and friends exist at
+	# more than one version under the same type string, and they carry different payloads.
+	var type: TwitchEventsubDefinition:
+		get(): return TwitchEventsubDefinition.get_definition(
+			message.payload.subscription.type, message.payload.subscription.version)
+	var data: Dictionary:
+		get(): return message.payload.event
+	var message: TwitchNotificationMessage
+
+	var typed_data: Variant:
+		get(): return type.parse_event(data)
+
+
+	func _init(notification_message: TwitchNotificationMessage) -> void:
+		message = notification_message
+	
+	
+	func get_condition() -> Dictionary:
+		return message.payload.subscription.condition
+
+
+## Will be send as soon as the websocket connection is up and running you can use it to subscribe to events
+signal session_id_received(id: String)
+
+## Will be called when an event is sent from Twitch.
+signal event(type: StringName, data: Dictionary)
+
+## Will be called when an event is sent from Twitch. Same like event signal but better named and easier to use in
+## inline awaits.
+signal event_received(event: Event)
+
+## Will be called when an event got revoked from your subscription by Twitch.
+signal events_revoked(type: StringName, status: String)
+
+## Called when any eventsub message is received for low level access
+signal message_received(message: Variant)
+
+## Called when a subscription got established at Twitch.
+signal subscription_created(subscription: TwitchEventsubConfig)
+
+## Called when a subscription couldn't be established at Twitch. Reason contains a readable message.
+signal subscription_failed(subscription: TwitchEventsubConfig, reason: String)
+
+
+## The api used to create the subscriptions (Can be empty will automatically look for first [TwitchAPI] in the
+## scene tree)
+@export var api: TwitchAPI
+## All subscriptions this eventsub should subscribe to
+@export var _subscriptions: Array[TwitchEventsubConfig] = []
+## Live twitch server you don't need to touch it except you want to implement a proxy in between for example
+@export var eventsub_live_server_url: String = "wss://eventsub.wss.twitch.tv/ws":
+	set(val):
+		eventsub_live_server_url = val
+		# Exported values are assigned after _init, the client has to follow them.
+		if _client != null:
+			_client.connection_url = val
+## Test server in combination of TwitchCLI
+@export var eventsub_test_server_url: String = "ws://127.0.0.1:8080/ws":
+	set(val):
+		eventsub_test_server_url = val
+		if _test_client != null:
+			_test_client.connection_url = val
+## Enables the test server usage
+@export var use_test_server: bool
+## Ignores messages that are older than this value. Twitch can send messages multiple time.
+@export var ignore_message_eventsub_in_seconds: int = 600:
+	set(val):
+		ignore_message_eventsub_in_seconds = val
+		if _seen_messages != null:
+			_seen_messages.window_msec = val * 1000
+
+var _client: WebsocketClient = WebsocketClient.new()
+var _test_client : WebsocketClient = WebsocketClient.new()
+## Swap over client in case Twitch sends us the message for a new server.
+## See: https://dev.twitch.tv/docs/eventsub/handling-websocket-events/#reconnect-message
+var _swap_over_client : WebsocketClient
+
+var session: Session
+## Ids of the messages that got processed recently, to drop the duplicates Twitch sends.
+var _seen_messages: TwitchSeenMessages = TwitchSeenMessages.new(
+		ignore_message_eventsub_in_seconds * 1000)
+## A copy of the messages that got processed recently.
+## Key: message id, Value: [method Time.get_ticks_msec] when it got processed.
+## @deprecated: Read-only copy, it was a live dictionary of Twitch timestamps before.
+var eventsub_messages: Dictionary:
+	get(): return _seen_messages.to_dictionary()
+## [method Time.get_ticks_msec] of the last frame of the session, 0 while there is none.
+var last_keepalive: int
+var is_open: bool:
+	get(): return _client.is_open
+var _should_connect: bool
+
+## When the Websocket server is shutting down and the client is doing a
+## gracefull handover
+var _swap_over_process: bool
+
+## queues the actions that should be executed when the connection is established
+var _action_stack: Array[SubscriptionAction]
+var _executing_action_stack: bool
+## Increased on every reconnect without subscriptions
+var _empty_connections: int
+
+## Determines the action that the subscription should do
+class SubscriptionAction extends RefCounted:
+	var subscribe: bool
+	var subscription: TwitchEventsubConfig
+
+	func _to_string() -> String:
+		return "%s %s" % [("Subscribe to" if subscribe else "Unsubscribe from"), subscription.definition.get_readable_name()]
+
+
+func _init() -> void:
+	_client.connection_url = eventsub_live_server_url
+	_watch_client(_client)
+	_test_client.connection_url = eventsub_test_server_url
+	_test_client.message_received.connect(_data_received.bind(_test_client))
+
+
+func _ready() -> void:
+	_client.name = "Websocket Client"
+	add_child(_client)
+	if use_test_server:
+		_test_client.name = "Websocket Client Test"
+		add_child(_test_client)
+	if api == null: api = TwitchAPI.instance
+
+
+func _enter_tree() -> void:
+	if instance == null: instance = self
+
+
+func _exit_tree() -> void:
+	# The clients drop their sockets outside the tree and reconnect once they are back, the
+	# session of the dropped socket is gone either way.
+	session = null
+	last_keepalive = 0
+	_discard_pending_handover()
+	if instance == self: instance = null
+
+
+func _process(_delta: float) -> void:
+	_check_keepalive(Time.get_ticks_msec())
+
+
+func _notification(what: int) -> void:
+	# Clients are created in _init but only become children in _ready.
+	if what == NOTIFICATION_PREDELETE:
+		# Variant, a client that got freed already can't be assigned to a typed variable.
+		for client: Variant in [_client, _test_client]:
+			if is_instance_valid(client) and client.get_parent() == null:
+				client.free()
+
+
+## Propergated call from twitch service
+func do_setup() -> void:
+	await open_connection()
+	_log.i("Eventsub setup")
+
+
+## Propergated call from twitch service
+func do_unsetup() -> void:
+	# unsubscribe() erases from the list, iterate a copy to reach every entry.
+	for subscription: TwitchEventsubConfig in _subscriptions.duplicate():
+		unsubscribe(subscription)
+	close_connection()
+	_log.i("Eventsub unsetup")
+
+
+func wait_setup() -> void:
+	await wait_for_session_established()
+
+
+## Waits until the eventsub is fully established
+func wait_for_session_established() -> void:
+	if session == null: await session_id_received
+
+
+func _on_connection_established() -> void:
+	if not _swap_over_process:
+		_action_stack.clear()
+		if _subscriptions.is_empty(): _empty_connections += 1
+		if _empty_connections >= 3:
+			_empty_connections = 0
+			_log.e("Stopped eventsub cause of no subscription.")
+			close_connection()
+			return
+
+		# Resubscribe
+		_log.i("Connection established -> resubscribe to: [%s]" % [_subscriptions])
+		for sub in _subscriptions: _add_action(sub, true)
+	_execute_action_stack()
+
+
+func _on_connection_closed(source: WebsocketClient) -> void:
+	if source == _swap_over_client:
+		_log.i("Handover connection closed before it took over, staying on the current one.")
+		_discard_pending_handover()
+		return
+	# A client that got replaced by a handover closes on its own, its session is already gone.
+	if source != _client:
+		return
+	session = null
+	last_keepalive = 0
+	_discard_pending_handover()
+
+
+func open_connection() -> void:
+	_should_connect = true
+	if _client.is_closed:
+		_client.open_connection()
+	if _test_client.is_closed && use_test_server:
+		_test_client.open_connection()
+
+
+func close_connection() -> void:
+	_should_connect = false
+	last_keepalive = 0
+	# Closed clients get closed again too, that cancels a reconnect they are waiting for.
+	_client.close()
+	_test_client.close()
+	_discard_pending_handover()
+
+
+## Add a new subscription
+func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
+	_log.i("Subscribe to %s" % eventsub_config.definition.get_readable_name())
+	_subscriptions.append(eventsub_config)
+	_add_action(eventsub_config, true)
+	_empty_connections = 0
+
+
+## Returns a list of subscriptions of the given type or empty if none.
+func get_subscription_by_type(type: TwitchEventsubDefinition.Type) -> Array[TwitchEventsubConfig]:
+	var result: Array[TwitchEventsubConfig] = []
+	for subscription in _subscriptions:
+		if subscription.type == type:
+			result.append(subscription)
+	return result
+
+
+func has_subscription(eventsub_definition: TwitchEventsubDefinition, condition: Dictionary) -> bool:
+	for subscription: TwitchEventsubConfig in _subscriptions:
+		if subscription.definition == eventsub_definition && subscription.condition == condition:
+			return true
+	return false
+
+
+## Remove a subscription
+func unsubscribe(eventsub_config: TwitchEventsubConfig) -> void:
+	_subscriptions.erase(eventsub_config)
+	_add_action(eventsub_config, false)
+
+
+## Process the queue of actions until its empty
+func _execute_action_stack() -> void:
+	if _executing_action_stack: return
+	await wait_for_session_established()
+	_log.d("Execute actions [%s]" % [_action_stack])
+	_executing_action_stack = true
+	while not _action_stack.is_empty():
+		var action = _action_stack.pop_back()
+		var sub: TwitchEventsubConfig = action.subscription
+		if action.subscribe:
+			_subscribe(sub)
+		else:
+			_unsubscribe(sub)
+	_executing_action_stack = false
+
+
+## Adds a subscribe or unsubscribe action to the queue
+func _add_action(sub: TwitchEventsubConfig, subscribe: bool) -> void:
+	var sub_action: TwitchEventsub.SubscriptionAction = SubscriptionAction.new()
+	sub_action.subscription = sub
+	sub_action.subscribe = subscribe
+	_action_stack.append(sub_action)
+	_log.d("Add subscribe action: %s" % sub.definition.get_readable_name())
+	_execute_action_stack()
+
+
+## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
+## for details on which API versions are available and which conditions are required.
+func _subscribe(subscription: TwitchEventsubConfig) -> String:
+	var event_name: StringName = subscription.definition.value
+	var version: StringName = subscription.definition.version
+	var conditions: Dictionary = subscription.get_conditions()
+
+	var data : TwitchCreateEventSubSubscription.Body = TwitchCreateEventSubSubscription.Body.new()
+	var transport : TwitchCreateEventSubSubscription.BodyTransport = TwitchCreateEventSubSubscription.BodyTransport.new()
+	data.type = event_name
+	data.version = version
+	data.condition = conditions
+	data.transport = transport
+	transport.method = "websocket"
+	transport.session_id = session.id
+
+	_log.d("Do subscribe: %s" % event_name)
+
+	var eventsub_response = await api.create_eventsub_subscription(data)
+
+	if eventsub_response.response.response_code == 401:
+		var reason: String = "Missing authentication for eventsub. The token got not authenticated yet. Please login!"
+		_log.e("Subscription failed for '%s': %s" % [data.type, reason])
+		subscription_failed.emit(subscription, reason)
+		_client.close(3000, "Missing Authentication")
+		return ""
+	elif eventsub_response.response.response_code == 403:
+		var reason: String = "The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % subscription.definition.documentation_link
+		_log.e("Subscription failed for '%s': %s" % [data.type, reason])
+		_log.d(eventsub_response.response.response_data.get_string_from_utf8())
+		subscription_failed.emit(subscription, reason)
+		_client.close(3003, "Missing Authorization")
+		return ""
+	if eventsub_response.response.response_code < 200 || eventsub_response.response.response_code >= 300:
+		var reason: String = "Unknown error %s: %s" % [eventsub_response.response.response_code, eventsub_response.response.response_data.get_string_from_utf8()]
+		_log.e("Subscription failed for '%s'. %s" % [data.type, reason])
+		subscription_failed.emit(subscription, reason)
+		return ""
+	elif eventsub_response.response.response_data.is_empty():
+		subscription_failed.emit(subscription, "Twitch responded without any subscription data.")
+		return ""
+	_log.i("Now listening to '%s' events." % data.type)
+
+	var result = JSON.parse_string(eventsub_response.response.response_data.get_string_from_utf8())
+	var subscription_id = result.data[0].id
+	subscription.id = subscription_id
+	subscription_created.emit(subscription)
+	return subscription_id
+
+
+## Unsubscribes from an eventsub in case of an error returns false
+func _unsubscribe(subscription: TwitchEventsubConfig) -> bool:
+	var response = await api.delete_eventsub_subscription(subscription.id)
+	return response.error || response.response_code != 200
+
+
+## Connects the signals of a client that carries the session, [param client] is bound to tell
+## the clients apart.
+func _watch_client(client: WebsocketClient) -> void:
+	client.process_priority = CLIENT_PROCESS_PRIORITY
+	client.message_received.connect(_data_received.bind(client))
+	client.connection_established.connect(_on_connection_established)
+	client.connection_closed.connect(_on_connection_closed.bind(client))
+
+
+func _data_received(data : PackedByteArray, source: WebsocketClient) -> void:
+	# Frames of a client that got replaced by a handover can still arrive, they're stale.
+	if source != _client and source != _swap_over_client and source != _test_client:
+		return
+	var message_str : String = data.get_string_from_utf8()
+	var message_json : Dictionary = JSON.parse_string(message_str)
+	if not message_json.has("metadata"):
+		_log.e("Twitch send something undocumented: %s" % message_str)
+		return
+	var metadata : Metadata = Metadata.new(message_json["metadata"])
+	var id: String = metadata.message_id
+	var timestamp_str: String = metadata.message_timestamp
+	var timestamp: int = Time.get_unix_time_from_datetime_string(timestamp_str)
+
+	# Every frame proves that the connection is alive, a duplicate or an outdated one too.
+	last_keepalive = Time.get_ticks_msec()
+	if _message_is_to_old(timestamp):
+		return
+	if not _seen_messages.remember(id, Time.get_ticks_msec()):
+		return
+
+	match metadata.message_type:
+		"session_welcome":
+			# During a handover only the welcome of the new connection counts.
+			if _swap_over_process and source != _swap_over_client:
+				return
+			if source == _swap_over_client:
+				_complete_handover()
+			var welcome_message: TwitchWelcomeMessage = TwitchWelcomeMessage.new(message_json)
+			session = welcome_message.payload.session
+			session_id_received.emit(session.id)
+			_log.i("Session established %s" % session.id)
+			message_received.emit(welcome_message)
+		"session_keepalive":
+			# Notification from server that the connection is still alive
+			var keep_alive_message: TwitchKeepaliveMessage = TwitchKeepaliveMessage.new(message_json)
+			message_received.emit(keep_alive_message)
+			pass
+		"session_reconnect":
+			var reconnect_message: TwitchReconnectMessage = TwitchReconnectMessage.new(message_json)
+			message_received.emit(reconnect_message)
+			_handle_reconnect(reconnect_message)
+		"revocation":
+			var revocation_message: TwitchRevocationMessage = TwitchRevocationMessage.new(message_json)
+			message_received.emit(revocation_message)
+			events_revoked.emit(revocation_message.payload.subscription.type,
+				revocation_message.payload.subscription.status)
+		"notification":
+			var notification_message: TwitchNotificationMessage = TwitchNotificationMessage.new(message_json)
+			message_received.emit(notification_message)
+			event.emit(notification_message.payload.subscription.type,
+				notification_message.payload.event)
+			event_received.emit(Event.new(notification_message))
+
+
+## Reconnects when the session went silent for longer than Twitch's keepalive promise. A socket
+## can stay open on our side long after the connection died, nothing else would notice.
+func _check_keepalive(now_msec: int) -> void:
+	if not _should_connect or session == null or last_keepalive <= 0:
+		return
+	if not _client.is_open or not _keepalive_timed_out(now_msec):
+		return
+	_log.e("No frame from Twitch for %s ms, reconnecting." % (now_msec - last_keepalive))
+	session = null
+	last_keepalive = 0
+	_discard_pending_handover()
+	# The peer stopped answering, a close handshake would never finish.
+	_client.abort()
+	_client.auto_reconnect = true
+
+
+func _keepalive_timed_out(now_msec: int) -> bool:
+	var timeout_seconds: int = maxi(
+			MIN_KEEPALIVE_TIMEOUT_SECONDS, session.keepalive_timeout_seconds)
+	return now_msec - last_keepalive > timeout_seconds * 1000 * KEEPALIVE_GRACE
+
+
+## Opens the connection Twitch asked to move to. The current one keeps running until the new one
+## got its welcome, see [method _complete_handover].
+func _handle_reconnect(reconnect_message: TwitchReconnectMessage) -> void:
+	if _swap_over_process:
+		_log.d("Ignored reconnect, a handover is already running.")
+		return
+	_log.i("Session is forced to reconnect")
+	_swap_over_process = true
+	var reconnect_url: String = reconnect_message.payload.session.reconnect_url
+	_swap_over_client = WebsocketClient.new()
+	_swap_over_client.name = "Websocket Client Handover"
+	_swap_over_client.connection_url = reconnect_url
+	_swap_over_client.reconnect_base_delay = _client.reconnect_base_delay
+	_swap_over_client.max_reconnect_delay = _client.max_reconnect_delay
+	_watch_client(_swap_over_client)
+	add_child(_swap_over_client, true)
+	_swap_over_client.open_connection()
+
+
+## Makes the handover connection the current one once it received its welcome.
+func _complete_handover() -> void:
+	var old_client: WebsocketClient = _client
+	_client = _swap_over_client
+	_swap_over_client = null
+	_swap_over_process = false
+	_log.i("Session reconnected on %s" % _client.connection_url)
+	# The reconnect URL belongs to this one session, later reconnects start at the live server.
+	_client.connection_url = eventsub_live_server_url
+	old_client.close(1000, "Closed cause of reconnect.")
+	old_client.queue_free()
+
+
+## Drops a handover that didn't complete. The current connection stays in charge.
+func _discard_pending_handover() -> void:
+	_swap_over_process = false
+	if _swap_over_client == null:
+		return
+	var pending: WebsocketClient = _swap_over_client
+	_swap_over_client = null
+	pending.close()
+	pending.queue_free()
+
+
+func _message_is_to_old(timestamp: int) -> bool:
+	return timestamp < Time.get_unix_time_from_system() - ignore_message_eventsub_in_seconds
+
+
+func get_client() -> WebsocketClient:
+	return _client
+
+
+func get_test_client() -> WebsocketClient:
+	return _test_client
+
+## Returns a copy of the current subscribed events. Don't modify the result they won't get applied anyway.
+func get_subscriptions() -> Array[TwitchEventsubConfig]:
+	return _subscriptions.duplicate()
