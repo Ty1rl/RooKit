@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://gnhgtgwtbrp7"]
+
+[ext_resource type="Script" uid="uid://bj73p856krtlp" path="res://scenes/tts_bot/tts_bot.gd" id="1_eadi6"]
+[ext_resource type="Texture2D" uid="uid://clk521w4e2ra1" path="res://scenes/tts_bot/rooBot.png" id="1_qokg3"]
+
+[node name="TTSBot" type="Node2D" unique_id=1958780083 node_paths=PackedStringArray("shown_marker", "hidden_marker")]
+visible = false
+script = ExtResource("1_eadi6")
+shown_marker = NodePath("ShownMarker")
+hidden_marker = NodePath("HiddenMarker")
+
+[node name="UserLabel" type="RichTextLabel" parent="." unique_id=1784038669]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -95.0
+offset_right = 100.0
+offset_bottom = -63.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/bold_font_size = 22
+bbcode_enabled = true
+text = "[b]UserName[/b]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 1
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="MessageLabel" type="RichTextLabel" parent="." unique_id=1252888608]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 69.0
+offset_right = 100.0
+offset_bottom = 139.0
+grow_horizontal = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+bbcode_enabled = true
+text = "This is a message"
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+
+[node name="ShownMarker" type="Marker2D" parent="." unique_id=2065131660]
+position = Vector2(1720, 200)
+
+[node name="HiddenMarker" type="Marker2D" parent="." unique_id=1077238090]
+position = Vector2(2120, 200)
+
+[node name="Body" type="Sprite2D" parent="." unique_id=1884277100]
+texture = ExtResource("1_qokg3")
+
+[node name="PhononSpeaker" type="PhononSpeaker" parent="." unique_id=119147440]
+voice = "Toby"
+player = NodePath("../AudioStreamPlayer")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1994866821]

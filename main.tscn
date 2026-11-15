@@ -2,8 +2,22 @@
 
 [ext_resource type="Script" uid="uid://b0ig6mupxdg7r" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://gnhgtgwtbrp7" path="res://scenes/tts_bot/tts_bot.tscn" id="3_h2yge"]
 
-[node name="Main" type="Node" unique_id=269133433]
+[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("subscription_message")]
 script = ExtResource("1_0xm2m")
+subscription_message = NodePath("subscription_message")
 
 [node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_ig7tw")]
+
+[node name="subscription_message" type="Node" parent="." unique_id=1795592896 node_paths=PackedStringArray("eventsub")]
+script = ExtResource("3_1bvp3")
+eventsub = NodePath("../TwitchService/EventSub")
+subscription = 18
+condition = {
+&"broadcaster_user_id": ""
+}
+metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
+
+[node name="TTSBot" parent="." unique_id=1958780083 instance=ExtResource("3_h2yge")]

@@ -3,6 +3,7 @@ extends Node
 signal chat_connected(twitch_chat: TwitchChat)
 
 @export var twitch_chat: TwitchChat
+@export var subscription_message: TwitchEventListener
 
 
 func _ready() -> void:
