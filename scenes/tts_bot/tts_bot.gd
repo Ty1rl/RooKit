@@ -1,5 +1,7 @@
+class_name TTSBot
 extends Node
 
+@export var main: Node
 @export var queue: TTSQueue
 @export var display: TTSDisplay
 
@@ -12,15 +14,18 @@ var _test_messages: Array[String] = [
 
 
 func _ready() -> void:
-	#var main: Node = get_parent()
-	#main.subscription_message.received.connect(_on_subscription_message)
+	if not main:
+		printerr("TTSBot: main not set")
+		return
+	
+	main.subscription_message.received.connect(_on_subscription_message)
 	
 	queue.message_started.connect(display.show_message)
 	queue.message_finished.connect(_on_message_finished)
 
 
-func _process(_delta: float) -> void:
-	queue.enqueue(TTSMessage.new("System", _test_messages.pick_random()))
+#func _process(_delta: float) -> void:
+	#queue.enqueue(TTSMessage.new("System", _test_messages.pick_random()))
 
 
 func _on_subscription_message(data: Dictionary) -> void:

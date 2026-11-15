@@ -4,9 +4,7 @@ extends Control
 
 @onready var scene_list: ItemList = %SceneList
 
-var scenes: Dictionary[StringName,String] = {
-	&"TTS Bot": "uid://gnhgtgwtbrp7"
-}
+var scenes: Dictionary[StringName,String] = {}
 
 var active_scene: Dictionary[StringName,Node] = {}
 

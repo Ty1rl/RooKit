@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bj73p856krtlp" path="res://scenes/tts_bot/tts_bot.gd" id="1_eadi6"]
 [ext_resource type="Texture2D" uid="uid://clk521w4e2ra1" path="res://scenes/tts_bot/rooBot.png" id="1_qokg3"]
-[ext_resource type="Script" uid="uid://d2sq028o4matp" path="res://scenes/tts_bot/tts_controller.gd" id="3_bbau5"]
 [ext_resource type="Script" uid="uid://b1iyfvs5d27h1" path="res://scenes/tts_bot/tts_queue.gd" id="3_k5fp6"]
 [ext_resource type="Script" uid="uid://c23hqfitle0p7" path="res://scenes/tts_bot/tts_display.gd" id="3_owkjq"]
 
@@ -22,68 +21,7 @@ player = NodePath("../AudioStreamPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="TTSQueue" unique_id=1994866821]
 
-[node name="TTSController" type="Control" parent="." unique_id=1249287879 node_paths=PackedStringArray("queue")]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("3_bbau5")
-queue = NodePath("../TTSQueue")
-
-[node name="PanelContainer" type="PanelContainer" parent="TTSController" unique_id=491108932]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="TTSController/PanelContainer" unique_id=286359024]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TTSController/PanelContainer/VBoxContainer" unique_id=1217838437]
-layout_mode = 2
-alignment = 1
-
-[node name="StopButton" type="Button" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer" unique_id=204746003]
-layout_mode = 2
-text = "Stop"
-
-[node name="PauseButton" type="Button" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer" unique_id=525348352]
-unique_name_in_owner = true
-layout_mode = 2
-toggle_mode = true
-text = "Pause"
-
-[node name="SkipButton" type="Button" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer" unique_id=657390214]
-layout_mode = 2
-text = "Skip >>"
-
-[node name="HSeparator" type="HSeparator" parent="TTSController/PanelContainer/VBoxContainer" unique_id=1078042811]
-layout_mode = 2
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="TTSController/PanelContainer/VBoxContainer" unique_id=1277042761]
-layout_mode = 2
-
-[node name="HistoryLabel" type="Label" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=330783549]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 256)
-custom_maximum_size = Vector2(256, 256)
-layout_mode = 2
-size_flags_horizontal = 3
-autowrap_mode = 3
-
-[node name="VSeparator" type="VSeparator" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=218078339]
-layout_mode = 2
-
-[node name="PendingLabel" type="Label" parent="TTSController/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=994119095]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 256)
-custom_maximum_size = Vector2(256, 256)
-layout_mode = 2
-size_flags_horizontal = 3
-autowrap_mode = 3
-
 [node name="TTSDisplay" type="Node2D" parent="." unique_id=1782285435 node_paths=PackedStringArray("shown_marker", "hidden_marker")]
-visible = false
 script = ExtResource("3_owkjq")
 shown_marker = NodePath("ShownMarker")
 hidden_marker = NodePath("HiddenMarker")
@@ -139,7 +77,3 @@ text = "This is a message"
 fit_content = true
 scroll_active = false
 horizontal_alignment = 1
-
-[connection signal="pressed" from="TTSController/PanelContainer/VBoxContainer/HBoxContainer/StopButton" to="TTSController" method="_on_stop_button_pressed"]
-[connection signal="toggled" from="TTSController/PanelContainer/VBoxContainer/HBoxContainer/PauseButton" to="TTSController" method="_on_pause_button_toggled"]
-[connection signal="pressed" from="TTSController/PanelContainer/VBoxContainer/HBoxContainer/SkipButton" to="TTSController" method="_on_skip_button_pressed"]

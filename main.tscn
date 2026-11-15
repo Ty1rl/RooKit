@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://b0ig6mupxdg7r" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://gnhgtgwtbrp7" path="res://scenes/tts_bot/tts_bot.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://c622kdn1y80ys" path="res://scenes/tts_bot/tts_controller.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://btxfuxlctuwyd" path="res://scenes/ui/scene_switcher.tscn" id="5_lquwl"]
 
 [node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("subscription_message")]
@@ -32,6 +34,9 @@ handle_input_locally = false
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
+[node name="TTSBot" parent="SpectatorSubViewport" unique_id=689248766 node_paths=PackedStringArray("main") instance=ExtResource("3_h2yge")]
+main = NodePath("../..")
+
 [node name="Control" type="Control" parent="." unique_id=1932269530]
 layout_mode = 3
 anchors_preset = 15
@@ -49,25 +54,37 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TabContainer" type="TabContainer" parent="Control/HBoxContainer" unique_id=1729789778]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_constants/side_margin = 0
 current_tab = 0
+clip_tabs = false
 
 [node name="Scenes" parent="Control/HBoxContainer/TabContainer" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
 layout_mode = 2
 scene_parent = NodePath("../../../../SpectatorSubViewport")
 metadata/_tab_index = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="Control/HBoxContainer" unique_id=1202961168]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=1578579191]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/HBoxContainer/VBoxContainer" unique_id=1202961168]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Preview" type="TextureRect" parent="Control/HBoxContainer/MarginContainer" unique_id=1844083776]
+[node name="Preview" type="TextureRect" parent="Control/HBoxContainer/VBoxContainer/MarginContainer" unique_id=1844083776]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 expand_mode = 2
 stretch_mode = 5
+
+[node name="TTSController" parent="Control/HBoxContainer/VBoxContainer" unique_id=1650023206 node_paths=PackedStringArray("tts_bot") instance=ExtResource("5_7mycd")]
+layout_mode = 2
+tts_bot = NodePath("../../../../SpectatorSubViewport/TTSBot")
