@@ -25,7 +25,6 @@ token = ExtResource("4_j0p3d")
 [node name="EventSub" type="Node" parent="." unique_id=1294051238 node_paths=PackedStringArray("api")]
 script = ExtResource("3_x3t7l")
 api = NodePath("../API")
-use_test_server = true
 
 [node name="API" type="Node" parent="." unique_id=148563040]
 script = ExtResource("1_yq54x")

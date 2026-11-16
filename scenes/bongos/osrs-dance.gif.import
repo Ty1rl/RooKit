@@ -1,0 +1,14 @@
+[remap]
+
+importer="gif.animated.texture.plugin"
+type="SpriteFrames"
+uid="uid://dncfs2csoqqsy"
+path="res://.godot/imported/osrs-dance.gif-6adb5b0bce222ed2f5d4f900152cd60e.res"
+
+[deps]
+
+source_file="res://scenes/bongos/osrs-dance.gif"
+dest_files=["res://.godot/imported/osrs-dance.gif-6adb5b0bce222ed2f5d4f900152cd60e.res"]
+
+[params]
+

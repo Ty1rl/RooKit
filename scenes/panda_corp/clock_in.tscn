@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://b2fq8v2ed247x"]
+
+[ext_resource type="Script" uid="uid://dfgbs52nyx6h" path="res://scenes/panda_corp/clock_in.gd" id="1_fgdc2"]
+[ext_resource type="SpriteFrames" uid="uid://bx11a743iaari" path="res://scenes/panda_corp/assets/BG.gif" id="2_8s4qr"]
+[ext_resource type="Texture2D" uid="uid://dsenafu1m6qgg" path="res://scenes/panda_corp/assets/fence.png" id="3_qfqsj"]
+[ext_resource type="SpriteFrames" uid="uid://b4pa5rbh08tks" path="res://scenes/panda_corp/assets/elevator_frames.tres" id="4_jurgp"]
+[ext_resource type="Script" uid="uid://bk0nn067acjqp" path="res://scripts/path_queue/path_queue.gd" id="5_kh0sq"]
+[ext_resource type="Script" uid="uid://cc1fd2d4ru0cq" path="res://scripts/path_queue/path_checkpoint.gd" id="6_knniy"]
+[ext_resource type="Script" uid="uid://bg1dkxaucw4kg" path="res://scripts/path_queue/checkpoint_step.gd" id="7_m4cbt"]
+[ext_resource type="Script" uid="uid://b0tk6q0smjjb2" path="res://scripts/path_queue/group_checkpoint.gd" id="8_qsxnq"]
+[ext_resource type="Texture2D" uid="uid://rjf2pydlgn80" path="res://scenes/panda_corp/assets/gate.png" id="9_ag6eu"]
+[ext_resource type="SpriteFrames" uid="uid://ddewm3a8ehwye" path="res://scenes/panda_corp/assets/card_frames.tres" id="10_8aj4y"]
+
+[sub_resource type="Curve2D" id="Curve2D_lb7td"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -100, 955, 0, 0, 0, 0, 1800, 955)
+}
+point_count = 2
+
+[node name="ClockIn" type="Node2D" unique_id=979434531]
+script = ExtResource("1_fgdc2")
+
+[node name="Background" type="AnimatedSprite2D" parent="." unique_id=1200349466]
+position = Vector2(960, 540)
+sprite_frames = ExtResource("2_8s4qr")
+autoplay = "default"
+
+[node name="Fence" type="Sprite2D" parent="." unique_id=133460768]
+position = Vector2(960, 540)
+texture = ExtResource("3_qfqsj")
+
+[node name="Elevator" type="AnimatedSprite2D" parent="." unique_id=1216334478]
+position = Vector2(1660, 810)
+sprite_frames = ExtResource("4_jurgp")
+animation = &"closed"
+
+[node name="PathQueue" type="Path2D" parent="." unique_id=311614132]
+curve = SubResource("Curve2D_lb7td")
+script = ExtResource("5_kh0sq")
+max_followers = null
+spacing = null
+default_speed = 256.0
+walk_animation = null
+idle_animation = null
+metadata/_custom_type_script = "uid://bk0nn067acjqp"
+
+[node name="SwipeCheckpoint" type="Marker2D" parent="PathQueue" unique_id=1248502239]
+position = Vector2(788, 945)
+script = ExtResource("6_knniy")
+metadata/_custom_type_script = "uid://cc1fd2d4ru0cq"
+
+[node name="PandaSwipe" type="Node" parent="PathQueue/SwipeCheckpoint" unique_id=900577174]
+script = ExtResource("7_m4cbt")
+animation = &"swipe"
+metadata/_custom_type_script = "uid://bg1dkxaucw4kg"
+
+[node name="CardPopup" type="Node" parent="PathQueue/SwipeCheckpoint" unique_id=2071655920 node_paths=PackedStringArray("sprite")]
+script = ExtResource("7_m4cbt")
+sprite = NodePath("../../../Card")
+animation = &"popup"
+wait = false
+metadata/_custom_type_script = "uid://bg1dkxaucw4kg"
+
+[node name="ElevatorCheckpoint" type="Marker2D" parent="PathQueue" unique_id=1953200224 node_paths=PackedStringArray("exit_point", "on_full", "per_follower", "on_done")]
+position = Vector2(1800, 945)
+script = ExtResource("8_qsxnq")
+max_wait = 3.0
+one_at_a_time = false
+wait_animation = &"wait"
+exit_point = NodePath("ElevatorExit")
+on_full = NodePath("DoorOpening")
+per_follower = NodePath("PandaEnter")
+on_done = NodePath("DoorClosing")
+despawns_character = true
+metadata/_custom_type_script = "uid://b0tk6q0smjjb2"
+
+[node name="ElevatorExit" type="Marker2D" parent="PathQueue/ElevatorCheckpoint" unique_id=470713406]
+position = Vector2(-140, 0)
+
+[node name="DoorOpening" type="Node" parent="PathQueue/ElevatorCheckpoint" unique_id=642867327 node_paths=PackedStringArray("sprite")]
+script = ExtResource("7_m4cbt")
+sprite = NodePath("../../../Elevator")
+animation = &"opening"
+metadata/_custom_type_script = "uid://bg1dkxaucw4kg"
+
+[node name="PandaEnter" type="Node" parent="PathQueue/ElevatorCheckpoint" unique_id=1287684771]
+script = ExtResource("7_m4cbt")
+animation = &"enter"
+metadata/_custom_type_script = "uid://bg1dkxaucw4kg"
+
+[node name="DoorClosing" type="Node" parent="PathQueue/ElevatorCheckpoint" unique_id=28418495 node_paths=PackedStringArray("sprite")]
+script = ExtResource("7_m4cbt")
+sprite = NodePath("../../../Elevator")
+animation = &"closing"
+metadata/_custom_type_script = "uid://bg1dkxaucw4kg"
+
+[node name="Gate" type="Sprite2D" parent="." unique_id=864183510]
+position = Vector2(1022, 839)
+texture = ExtResource("9_ag6eu")
+
+[node name="Card" type="AnimatedSprite2D" parent="." unique_id=935459322]
+position = Vector2(850, 850)
+sprite_frames = ExtResource("10_8aj4y")
+animation = &"gone"
+
+[node name="CountLabel" type="RichTextLabel" parent="." unique_id=901241458]
+unique_name_in_owner = true
+offset_left = 659.0
+offset_top = 538.0
+offset_right = 931.0
+offset_bottom = 600.0
+theme_override_font_sizes/bold_font_size = 32
+bbcode_enabled = true
+horizontal_alignment = 1
+vertical_alignment = 1

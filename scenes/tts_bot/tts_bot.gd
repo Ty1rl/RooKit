@@ -5,12 +5,12 @@ extends Node
 @export var queue: TTSQueue
 @export var display: TTSDisplay
 
-var _test_messages: Array[String] = [
-	"She sells seashells by the seashore.",
-	"Peter Piper picked a peck of pickled peppers.",
-	"How much wood would a woodchuck chuck, if a woodchuck could chuck wood?",
-	"Betty Botter bought a bit of butter, but the butter Betty Botter bought was bitter."
-]
+#var _test_messages: Array[String] = [
+	#"She sells seashells by the seashore.",
+	#"Peter Piper picked a peck of pickled peppers.",
+	#"How much wood would a woodchuck chuck, if a woodchuck could chuck wood?",
+	#"Betty Botter bought a bit of butter, but the butter Betty Botter bought was bitter."
+#]
 
 
 func _ready() -> void:

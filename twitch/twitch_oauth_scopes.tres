@@ -4,4 +4,5 @@
 
 [resource]
 script = ExtResource("1_qks67")
+used_scopes = Array[StringName]([&"channel:read:subscriptions", &"user:read:chat"])
 metadata/_custom_type_script = "uid://b3n3et8mebjcc"

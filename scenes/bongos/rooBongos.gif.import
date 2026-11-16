@@ -1,0 +1,14 @@
+[remap]
+
+importer="gif.animated.texture.plugin"
+type="SpriteFrames"
+uid="uid://bp1bwb45bp0tp"
+path="res://.godot/imported/rooBongos.gif-c700e9cb8bb065a27979194961f6a565.res"
+
+[deps]
+
+source_file="res://scenes/bongos/rooBongos.gif"
+dest_files=["res://.godot/imported/rooBongos.gif-c700e9cb8bb065a27979194961f6a565.res"]
+
+[params]
+

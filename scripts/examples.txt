@@ -1,0 +1,44 @@
+	 #Show different effects depending on the message types
+	match chat_message.message_type:
+		# The default message style
+		TwitchChatMessage.MessageType.text:
+			result_message = await show_text(chat_message, result_message)
+	
+		# When someone is using the gigantified emotes
+		TwitchChatMessage.MessageType.power_ups_gigantified_emote:
+			result_message = await show_text(chat_message, result_message, 3)
+	
+		# When someone is using the highlight my message from the channel point rewards
+		TwitchChatMessage.MessageType.channel_points_highlighted:
+			result_message += "[bgcolor=#755ebc][color=#e9fffb]"
+			result_message = await show_text(chat_message, result_message)
+			result_message += "[/color][/bgcolor]"
+	
+		# When someone is using the message effect bit reward
+		TwitchChatMessage.MessageType.power_ups_message_effect:
+			result_message += "[shake rate=20.0 level=5 connected=1]"
+			result_message = await show_text(chat_message, result_message)
+			result_message += "[/shake]"
+
+## Prepares the message so that all fragments will be shown correctly
+func show_text(message: TwitchChatMessage, current_text: String, emote_scale: int = 1) -> String:
+	var media_loader: TwitchMediaLoader = TwitchMediaLoader.instance
+	# Load emotes and badges in parallel to improve the speed
+	await message.load_emotes_from_fragment(media_loader)
+	# Unique Id for the spriteframes to identify them
+	var fragment_id : int = 0
+	for fragment : TwitchChatMessage.Fragment in message.message.fragments:
+		fragment_id += 1
+		match fragment.type:
+			TwitchChatMessage.FragmentType.text:
+				current_text += fragment.text
+			TwitchChatMessage.FragmentType.cheermote:
+				var cheermote_scale: StringName = TwitchCheermoteDefinition.SCALE_MAP.get(emote_scale, TwitchCheermoteDefinition.SCALE_1)
+				var cheermote : SpriteFrames = await fragment.cheermote.get_sprite_frames(media_loader, cheermote_scale)
+				current_text += "[sprite id='f-%s']%s[/sprite]" % [fragment_id, cheermote.resource_path]
+			TwitchChatMessage.FragmentType.emote:
+				var emote : SpriteFrames = await fragment.emote.get_sprite_frames(media_loader, emote_scale)
+				current_text += "[sprite id='f-%s']%s[/sprite]" % [fragment_id, emote.resource_path]
+			TwitchChatMessage.FragmentType.mention:
+				current_text += "[color=%s]@%s[/color]" % ["#00a0b6", fragment.mention.user_name]
+	return current_text

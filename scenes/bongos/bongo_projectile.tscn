@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b78165piicbwo"]
+
+[ext_resource type="Script" uid="uid://dcwdog53vsv3s" path="res://scenes/bongos/bongo_projectile.gd" id="1_d8cul"]
+[ext_resource type="SpriteFrames" uid="uid://dncfs2csoqqsy" path="res://scenes/bongos/osrs-dance.gif" id="1_goy2n"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_d8cul"]
+height = 100.0
+
+[node name="BongoProjectile" type="RigidBody2D" unique_id=593143173]
+mass = 0.5
+script = ExtResource("1_d8cul")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1944375000]
+shape = SubResource("CapsuleShape2D_d8cul")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=933478562]
+sprite_frames = ExtResource("1_goy2n")
+autoplay = "default"
+
+[node name="Timer" type="Timer" parent="." unique_id=1844061986]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -4,7 +4,11 @@ extends Control
 
 @onready var scene_list: ItemList = %SceneList
 
-var scenes: Dictionary[StringName,String] = {}
+var scenes: Dictionary[StringName,String] = {
+	&"Clock-in" : "uid://b2fq8v2ed247x",
+	&"Clock-in Overlay" : "uid://brcxplrppn8u5",
+	&"Bongos" : "uid://0s23bgajhsy0"
+}
 
 var active_scene: Dictionary[StringName,Node] = {}
 

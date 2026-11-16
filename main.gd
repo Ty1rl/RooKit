@@ -4,6 +4,7 @@ signal chat_connected(twitch_chat: TwitchChat)
 
 @export var twitch_chat: TwitchChat
 @export var subscription_message: TwitchEventListener
+@export var punch_clock: PunchClock
 
 @onready var exporter: SpectatorStreamExporter = %SpectatorStreamExporter
 @onready var spectator_sub_viewport: SubViewport = %SpectatorSubViewport

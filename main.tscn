@@ -3,15 +3,27 @@
 [ext_resource type="Script" uid="uid://b0ig6mupxdg7r" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="3_1bvp3"]
+[ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="3_5vw27"]
 [ext_resource type="PackedScene" uid="uid://gnhgtgwtbrp7" path="res://scenes/tts_bot/tts_bot.tscn" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://riu72l0b14vv" path="res://scenes/panda_corp/punch_clock.gd" id="4_272bh"]
 [ext_resource type="PackedScene" uid="uid://c622kdn1y80ys" path="res://scenes/tts_bot/tts_controller.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://btxfuxlctuwyd" path="res://scenes/ui/scene_switcher.tscn" id="5_lquwl"]
 
-[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("subscription_message")]
+[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat", "subscription_message", "punch_clock")]
 script = ExtResource("1_0xm2m")
+twitch_chat = NodePath("TwitchChat")
 subscription_message = NodePath("subscription_message")
+punch_clock = NodePath("PunchClock")
 
 [node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_ig7tw")]
+
+[node name="TwitchChat" type="Node" parent="." unique_id=83917256 node_paths=PackedStringArray("media_loader", "eventsub", "api")]
+script = ExtResource("3_5vw27")
+media_loader = NodePath("../TwitchService/MediaLoader")
+eventsub = NodePath("../TwitchService/EventSub")
+api = NodePath("../TwitchService/API")
+subscribe_on_ready = false
+metadata/_custom_type_script = "uid://dcq1bvfrqimqq"
 
 [node name="subscription_message" type="Node" parent="." unique_id=1795592896 node_paths=PackedStringArray("eventsub")]
 script = ExtResource("3_1bvp3")
@@ -21,6 +33,11 @@ condition = {
 &"broadcaster_user_id": ""
 }
 metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
+
+[node name="PunchClock" type="Node" parent="." unique_id=2059603987]
+unique_name_in_owner = true
+script = ExtResource("4_272bh")
+metadata/_custom_type_script = "uid://riu72l0b14vv"
 
 [node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574]
 target_viewport = NodePath("../SpectatorSubViewport")
@@ -89,3 +106,5 @@ stretch_mode = 5
 [node name="TTSController" parent="Control/HBoxContainer/VBoxContainer" unique_id=1650023206 node_paths=PackedStringArray("tts_bot") instance=ExtResource("5_7mycd")]
 layout_mode = 2
 tts_bot = NodePath("../../../../SpectatorSubViewport/TTSBot")
+
+[connection signal="chat_connected" from="." to="PunchClock" method="_on_main_chat_connected"]

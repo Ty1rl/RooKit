@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://0s23bgajhsy0"]
+
+[ext_resource type="SpriteFrames" uid="uid://bp1bwb45bp0tp" path="res://scenes/bongos/rooBongos.gif" id="1_8fj6x"]
+[ext_resource type="Script" uid="uid://bb1hybymnwgt0" path="res://scenes/bongos/bongos.gd" id="1_rnqwc"]
+[ext_resource type="PackedScene" uid="uid://b78165piicbwo" path="res://scenes/bongos/bongo_projectile.tscn" id="2_vvq5x"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_207l3"]
+normal = Vector2(0, 1)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_tntj4"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_k5k0b"]
+normal = Vector2(-1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vvq5x"]
+bg_color = Color(0.5294118, 1, 0.53333336, 0.6666667)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="Bongos" type="Node2D" unique_id=1952295799 node_paths=PackedStringArray("projectile_spawn_point")]
+script = ExtResource("1_rnqwc")
+projectile_scene = ExtResource("2_vvq5x")
+projectile_spawn_point = NodePath("Marker2D")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1358343960]
+position = Vector2(162, 1020)
+scale = Vector2(2, 2)
+sprite_frames = ExtResource("1_8fj6x")
+autoplay = "default"
+flip_h = true
+
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="." unique_id=77928262]
+position = Vector2(1758, 1020)
+scale = Vector2(2, 2)
+sprite_frames = ExtResource("1_8fj6x")
+autoplay = "default"
+
+[node name="Marker2D" type="Marker2D" parent="." unique_id=579881929]
+position = Vector2(960, 1100)
+
+[node name="WorldBoundary" type="StaticBody2D" parent="." unique_id=187857667]
+
+[node name="Top" type="CollisionShape2D" parent="WorldBoundary" unique_id=1983233359]
+position = Vector2(960, 0)
+shape = SubResource("WorldBoundaryShape2D_207l3")
+
+[node name="Left" type="CollisionShape2D" parent="WorldBoundary" unique_id=353154247]
+position = Vector2(0, 540)
+shape = SubResource("WorldBoundaryShape2D_tntj4")
+
+[node name="Right" type="CollisionShape2D" parent="WorldBoundary" unique_id=2051168638]
+position = Vector2(1920, 540)
+shape = SubResource("WorldBoundaryShape2D_k5k0b")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=462297621]
+
+[node name="Control" type="Control" parent="HUD" unique_id=1844618819]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BongoBar" type="ProgressBar" parent="HUD/Control" unique_id=1968033829]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -750.0
+offset_top = -80.0
+offset_right = 750.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/outline_size = 4
+theme_override_styles/fill = SubResource("StyleBoxFlat_vvq5x")
+max_value = 1.0
+show_percentage = false
