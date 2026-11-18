@@ -37,7 +37,6 @@ autoplay = "default"
 [node name="BeastChase" type="Path2D" parent="." unique_id=737303046]
 curve = SubResource("Curve2D_qfqsj")
 script = ExtResource("3_jurgp")
-trigger_interval = 1.0
 
 [node name="BeastChaseFollow" type="PathFollow2D" parent="BeastChase" unique_id=122800595]
 position = Vector2(-300, 315)
@@ -60,11 +59,6 @@ animation = &"closed"
 [node name="PathQueue" type="Path2D" parent="." unique_id=311614132]
 curve = SubResource("Curve2D_lb7td")
 script = ExtResource("5_kh0sq")
-max_followers = null
-spacing = null
-default_speed = 256.0
-walk_animation = null
-idle_animation = null
 metadata/_custom_type_script = "uid://bk0nn067acjqp"
 
 [node name="SwipeCheckpoint" type="Marker2D" parent="PathQueue" unique_id=1248502239]
