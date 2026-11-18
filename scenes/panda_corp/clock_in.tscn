@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://b2fq8v2ed247x"]
 
 [ext_resource type="Script" uid="uid://dfgbs52nyx6h" path="res://scenes/panda_corp/clock_in.gd" id="1_fgdc2"]
-[ext_resource type="SpriteFrames" uid="uid://bx11a743iaari" path="res://scenes/panda_corp/assets/BG.gif" id="2_8s4qr"]
+[ext_resource type="SpriteFrames" uid="uid://cbittj2fhjkhg" path="res://scenes/panda_corp/assets/BG_V2.gif" id="2_fgdc2"]
+[ext_resource type="SpriteFrames" uid="uid://ddgy2mwld3eew" path="res://scenes/panda_corp/assets/beast_chase.gif" id="3_8s4qr"]
+[ext_resource type="Script" uid="uid://cpill1ocutq1d" path="res://scenes/panda_corp/beast_chase.gd" id="3_jurgp"]
 [ext_resource type="Texture2D" uid="uid://dsenafu1m6qgg" path="res://scenes/panda_corp/assets/fence.png" id="3_qfqsj"]
 [ext_resource type="SpriteFrames" uid="uid://b4pa5rbh08tks" path="res://scenes/panda_corp/assets/elevator_frames.tres" id="4_jurgp"]
 [ext_resource type="Script" uid="uid://bk0nn067acjqp" path="res://scripts/path_queue/path_queue.gd" id="5_kh0sq"]
@@ -10,6 +12,12 @@
 [ext_resource type="Script" uid="uid://b0tk6q0smjjb2" path="res://scripts/path_queue/group_checkpoint.gd" id="8_qsxnq"]
 [ext_resource type="Texture2D" uid="uid://rjf2pydlgn80" path="res://scenes/panda_corp/assets/gate.png" id="9_ag6eu"]
 [ext_resource type="SpriteFrames" uid="uid://ddewm3a8ehwye" path="res://scenes/panda_corp/assets/card_frames.tres" id="10_8aj4y"]
+
+[sub_resource type="Curve2D" id="Curve2D_qfqsj"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -300, 315, 0, 0, 0, 0, 2220, 315)
+}
+point_count = 2
 
 [sub_resource type="Curve2D" id="Curve2D_lb7td"]
 _data = {
@@ -22,7 +30,20 @@ script = ExtResource("1_fgdc2")
 
 [node name="Background" type="AnimatedSprite2D" parent="." unique_id=1200349466]
 position = Vector2(960, 540)
-sprite_frames = ExtResource("2_8s4qr")
+sprite_frames = ExtResource("2_fgdc2")
+autoplay = "default"
+
+[node name="BeastChase" type="Path2D" parent="." unique_id=737303046]
+curve = SubResource("Curve2D_qfqsj")
+script = ExtResource("3_jurgp")
+
+[node name="BeastChaseFollow" type="PathFollow2D" parent="BeastChase" unique_id=122800595]
+position = Vector2(-300, 315)
+rotates = false
+loop = false
+
+[node name="BeastChaseSprite" type="AnimatedSprite2D" parent="BeastChase/BeastChaseFollow" unique_id=193375020]
+sprite_frames = ExtResource("3_8s4qr")
 autoplay = "default"
 
 [node name="Fence" type="Sprite2D" parent="." unique_id=133460768]

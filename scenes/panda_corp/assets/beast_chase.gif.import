@@ -1,0 +1,14 @@
+[remap]
+
+importer="gif.animated.texture.plugin"
+type="SpriteFrames"
+uid="uid://ddgy2mwld3eew"
+path="res://.godot/imported/beast_chase.gif-a4e5d9f614a68cd93e7abfe015cbe3c7.res"
+
+[deps]
+
+source_file="res://scenes/panda_corp/assets/beast_chase.gif"
+dest_files=["res://.godot/imported/beast_chase.gif-a4e5d9f614a68cd93e7abfe015cbe3c7.res"]
+
+[params]
+

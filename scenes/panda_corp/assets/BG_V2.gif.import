@@ -1,0 +1,14 @@
+[remap]
+
+importer="gif.animated.texture.plugin"
+type="SpriteFrames"
+uid="uid://cbittj2fhjkhg"
+path="res://.godot/imported/BG_V2.gif-4c1c98814dfd9cd83a01afa5c52f2c69.res"
+
+[deps]
+
+source_file="res://scenes/panda_corp/assets/BG_V2.gif"
+dest_files=["res://.godot/imported/BG_V2.gif-4c1c98814dfd9cd83a01afa5c52f2c69.res"]
+
+[params]
+
