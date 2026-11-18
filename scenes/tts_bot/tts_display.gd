@@ -7,7 +7,6 @@ extends Node2D
 
 @onready var user_label: RichTextLabel = $UserLabel
 @onready var message_label: RichTextLabel = $MessageLabel
-@onready var body: Node2D = $Body
 
 var _sprite_effect := SpriteFrameEffect.new()
 var _tween: Tween

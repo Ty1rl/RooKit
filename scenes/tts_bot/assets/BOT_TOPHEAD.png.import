@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clk521w4e2ra1"
-path="res://.godot/imported/rooBot.png-f920f7d79bebad7d3656731973f3df04.ctex"
+uid="uid://bc4nr1wp4nljl"
+path="res://.godot/imported/BOT_TOPHEAD.png-6cf0c6cee5da741d635211e7bf0ec220.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/tts_bot/rooBot.png"
-dest_files=["res://.godot/imported/rooBot.png-f920f7d79bebad7d3656731973f3df04.ctex"]
+source_file="res://scenes/tts_bot/assets/BOT_TOPHEAD.png"
+dest_files=["res://.godot/imported/BOT_TOPHEAD.png-6cf0c6cee5da741d635211e7bf0ec220.ctex"]
 
 [params]
 

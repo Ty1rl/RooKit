@@ -18,6 +18,7 @@ var _num_regex := RegEx.new()
 func _ready() -> void:
 	_num_regex.compile("(?<!^)(?=(\\d{3})+$)")
 
+
 #func _process(_delta: float) -> void:
 	#count += 1
 	#var formated_count := format_count(count)

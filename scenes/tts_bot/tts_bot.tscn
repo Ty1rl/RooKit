@@ -1,9 +1,14 @@
 [gd_scene format=3 uid="uid://gnhgtgwtbrp7"]
 
 [ext_resource type="Script" uid="uid://bj73p856krtlp" path="res://scenes/tts_bot/tts_bot.gd" id="1_eadi6"]
-[ext_resource type="Texture2D" uid="uid://clk521w4e2ra1" path="res://scenes/tts_bot/rooBot.png" id="1_qokg3"]
 [ext_resource type="Script" uid="uid://b1iyfvs5d27h1" path="res://scenes/tts_bot/tts_queue.gd" id="3_k5fp6"]
 [ext_resource type="Script" uid="uid://c23hqfitle0p7" path="res://scenes/tts_bot/tts_display.gd" id="3_owkjq"]
+[ext_resource type="Texture2D" uid="uid://dxc66kr2hd2tg" path="res://scenes/tts_bot/assets/BOT_AML.png" id="4_0k0tc"]
+[ext_resource type="Script" uid="uid://ba6y1qeeus86d" path="res://scenes/tts_bot/bot.gd" id="4_m7265"]
+[ext_resource type="Texture2D" uid="uid://cwe3b18y41qg0" path="res://scenes/tts_bot/assets/BOT_AMR.png" id="5_m7265"]
+[ext_resource type="Texture2D" uid="uid://c7sl0s45buun8" path="res://scenes/tts_bot/assets/BOT_BD.png" id="6_nkt8v"]
+[ext_resource type="Texture2D" uid="uid://cj3s76mj8ynaf" path="res://scenes/tts_bot/assets/BOT_BOTHEAD.png" id="7_taiuu"]
+[ext_resource type="Texture2D" uid="uid://bc4nr1wp4nljl" path="res://scenes/tts_bot/assets/BOT_TOPHEAD.png" id="8_drnpk"]
 
 [node name="TTSBot" type="Node" unique_id=689248766 node_paths=PackedStringArray("queue", "display")]
 script = ExtResource("1_eadi6")
@@ -22,13 +27,41 @@ player = NodePath("../AudioStreamPlayer")
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="TTSQueue" unique_id=1994866821]
 
 [node name="TTSDisplay" type="Node2D" parent="." unique_id=1782285435 node_paths=PackedStringArray("shown_marker", "hidden_marker")]
+z_index = 1
 script = ExtResource("3_owkjq")
 shown_marker = NodePath("ShownMarker")
 hidden_marker = NodePath("HiddenMarker")
 
-[node name="Body" type="Sprite2D" parent="TTSDisplay" unique_id=1884277100]
-unique_name_in_owner = true
-texture = ExtResource("1_qokg3")
+[node name="Bot" type="Node2D" parent="TTSDisplay" unique_id=2037992981]
+script = ExtResource("4_m7265")
+
+[node name="BotAml" type="Sprite2D" parent="TTSDisplay/Bot" unique_id=510260664]
+position = Vector2(43, 19)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("4_0k0tc")
+offset = Vector2(-143.33333, -163.33333)
+
+[node name="BotAmr" type="Sprite2D" parent="TTSDisplay/Bot" unique_id=1810354634]
+position = Vector2(-32, 19)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("5_m7265")
+offset = Vector2(106.666664, -163.33333)
+
+[node name="BotBd" type="Sprite2D" parent="TTSDisplay/Bot" unique_id=1494973157]
+position = Vector2(0, 1.9073486e-06)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("6_nkt8v")
+offset = Vector2(0, -100)
+
+[node name="BotBothead" type="Sprite2D" parent="TTSDisplay/Bot" unique_id=1475764295]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("7_taiuu")
+offset = Vector2(0, -99.99999)
+
+[node name="BotTophead" type="Sprite2D" parent="TTSDisplay/Bot" unique_id=1465681133]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("8_drnpk")
+offset = Vector2(0, -100)
 
 [node name="ShownMarker" type="Marker2D" parent="TTSDisplay" unique_id=2065131660]
 position = Vector2(1720, 200)
@@ -44,9 +77,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -100.0
-offset_top = -95.0
+offset_top = -139.0
 offset_right = 100.0
-offset_bottom = -63.0
+offset_bottom = -107.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -66,9 +99,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -100.0
-offset_top = 69.0
+offset_top = 71.0
 offset_right = 100.0
-offset_bottom = 139.0
+offset_bottom = 141.0
 grow_horizontal = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
