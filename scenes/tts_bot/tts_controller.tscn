@@ -37,7 +37,8 @@ text = "Stop"
 unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
-text = "Pause"
+button_pressed = true
+text = "Play"
 
 [node name="SkipButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1171433365]
 layout_mode = 2

@@ -25,6 +25,8 @@ func _ready() -> void:
 	
 	_queue.changed.connect(_refresh)
 	_refresh()
+	
+	_queue.set_paused(true)
 
 
 func _refresh() -> void:
@@ -60,3 +62,4 @@ func _on_skip_button_pressed() -> void:
 
 func _on_volume_slider_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(_bus_index, linear_to_db(value))
+	SettingsConfig.set_master_volume(value)

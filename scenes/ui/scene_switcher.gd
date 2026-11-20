@@ -16,10 +16,9 @@ var active_scene: Dictionary[StringName,Node] = {}
 func _ready() -> void:
 	for scene_name in scenes.keys():
 		scene_list.add_item(scene_name)
-
-
-func _on_collapse_button_toggled(toggled_on: bool) -> void:
-	scene_list.visible = toggled_on
+	
+	scene_list.select(0)
+	_add_scene(&"Clock-in")
 
 
 func _on_scene_list_multi_selected(index: int, selected: bool) -> void:
@@ -29,11 +28,20 @@ func _on_scene_list_multi_selected(index: int, selected: bool) -> void:
 	
 	var selected_name: StringName = scene_list.get_item_text(index)
 	if selected:
-		if not active_scene.has(selected_name):
-			var selected_scene: Node = load(scenes.get(selected_name)).instantiate()
-			active_scene[selected_name] = selected_scene
-			scene_parent.add_child(selected_scene)
-	elif active_scene.has(selected_name):
-		var selected_scene: Node = active_scene.get(selected_name)
-		selected_scene.queue_free()
-		active_scene.erase(selected_name)
+		_add_scene(selected_name)
+	else:
+		_remove_scene(selected_name)
+
+
+func _add_scene(scene_name: StringName) -> void:
+	if not active_scene.has(scene_name):
+			var scene: Node = load(scenes.get(scene_name)).instantiate()
+			active_scene[scene_name] = scene
+			scene_parent.add_child(scene)
+
+
+func _remove_scene(scene_name: StringName) -> void:
+	if active_scene.has(scene_name):
+		var scene: Node = active_scene.get(scene_name)
+		scene.queue_free()
+		active_scene.erase(scene_name)

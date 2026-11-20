@@ -18,6 +18,10 @@ boot_splash/stretch_mode=0
 boot_splash/image="uid://clk521w4e2ra1"
 config/icon="uid://clk521w4e2ra1"
 
+[autoload]
+
+SettingsConfig="*uid://u34tuuno6imv"
+
 [display]
 
 window/size/viewport_width=1920
