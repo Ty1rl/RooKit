@@ -22,8 +22,6 @@ func _ready() -> void:
 	
 	print("Connected Twitch account: %s (ID: %s)" % [user.display_name, user.id])
 	await _connect_chat(user)
-	
-	
 
 
 func _setup() -> TwitchUser:
