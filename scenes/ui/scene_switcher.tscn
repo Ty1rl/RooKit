@@ -4,22 +4,13 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4blun"]
 
-[node name="SceneSwitcher" type="PanelContainer" unique_id=234645265]
+[node name="SceneSwitcher" type="ItemList" unique_id=1338902740]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+theme_override_styles/cursor_unfocused = SubResource("StyleBoxEmpty_4blun")
 script = ExtResource("1_4blun")
 
-[node name="SceneList" type="ItemList" parent="." unique_id=1213778444]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-theme_override_styles/cursor_unfocused = SubResource("StyleBoxEmpty_4blun")
-select_mode = 2
-auto_width = true
-auto_height = true
-
-[connection signal="multi_selected" from="SceneList" to="." method="_on_scene_list_multi_selected"]
+[connection signal="item_selected" from="." to="." method="_on_item_selected"]

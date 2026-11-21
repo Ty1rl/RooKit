@@ -71,17 +71,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="Control/HBoxContainer" unique_id=1729789778]
+[node name="Scenes" parent="Control/HBoxContainer" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_constants/side_margin = 0
-current_tab = 0
-clip_tabs = false
-
-[node name="Scenes" parent="Control/HBoxContainer/TabContainer" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
-layout_mode = 2
-scene_parent = NodePath("../../../../SpectatorSubViewport")
-metadata/_tab_index = 0
+scene_parent = NodePath("../../../SpectatorSubViewport")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=1578579191]
 layout_mode = 2
