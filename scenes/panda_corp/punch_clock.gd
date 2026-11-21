@@ -5,7 +5,7 @@ signal clock_in(username: String, count: String)
 
 @export var trigger_string: String = "rooSit"
 
-var seen_chatters: Dictionary = {}
+var seen_chatters: Dictionary[String, bool] = {} # user_id, filler
 
 var count: int = 0
 
@@ -29,7 +29,7 @@ func _on_chat_message_received(chat_message: TwitchChatMessage) -> void:
 	if trigger_string not in chat_message.message.text:
 		return
 	
-	if _seen(chat_message.chatter_user_name):
+	if _seen(chat_message.chatter_user_id):
 		return
 	
 	count += 1
@@ -65,11 +65,11 @@ func format_username(chat_message: TwitchChatMessage) -> String:
 	return formated_username
 
 
-func _seen(username: String) -> bool:
-	if seen_chatters.has(username):
+func _seen(user_id: String) -> bool:
+	if seen_chatters.has(user_id):
 		return true
 	
-	seen_chatters[username] = true
+	seen_chatters[user_id] = true
 	return false
 
 
