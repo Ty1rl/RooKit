@@ -1,6 +1,6 @@
 extends RichTextLabel
 
-const ARROWS: Array[String] = ["[b]△[/b]", "[b]▽[/b]", "[b]☺[/b]"]
+const ARROWS: Array[String] = ["[b]△[/b]", "[b]▽[/b]"]
 
 
 func _on_door_opening_started() -> void:

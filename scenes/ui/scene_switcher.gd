@@ -12,6 +12,8 @@ var active_scene: Node
 
 
 func _ready() -> void:
+	item_selected.connect(_on_item_selected)
+	
 	for scene_name in scenes.keys():
 		add_item(scene_name)
 	

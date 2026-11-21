@@ -30,8 +30,8 @@ func _ready() -> void:
 
 
 func _refresh() -> void:
-	pending_label.text = "Up next\n" + _format(_queue.get_pending(upcoming_count))
-	history_label.text = "History\n" + _format(_queue.get_history(history_count))
+	pending_label.text = "Next\n" + _format(_queue.get_pending(upcoming_count))
+	history_label.text = "Previous\n" + _format(_queue.get_history(history_count))
 
 
 func _format(messages: Array) -> String:
@@ -43,7 +43,6 @@ func _format(messages: Array) -> String:
 
 func _on_stop_button_pressed() -> void:
 	_queue.skip()
-	
 	pause_button.button_pressed = true
 
 

@@ -12,5 +12,3 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/cursor_unfocused = SubResource("StyleBoxEmpty_4blun")
 script = ExtResource("1_4blun")
-
-[connection signal="item_selected" from="." to="." method="_on_item_selected"]
