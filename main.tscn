@@ -6,9 +6,12 @@
 [ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="3_5vw27"]
 [ext_resource type="PackedScene" uid="uid://gnhgtgwtbrp7" path="res://scenes/tts_bot/tts_bot.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://riu72l0b14vv" path="res://scenes/panda_corp/punch_clock.gd" id="4_272bh"]
+[ext_resource type="Script" uid="uid://clf0k2rj32rl2" path="res://scripts/stream_status.gd" id="5_4c57u"]
 [ext_resource type="PackedScene" uid="uid://c622kdn1y80ys" path="res://scenes/tts_bot/tts_controller.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://btxfuxlctuwyd" path="res://scenes/ui/scene_switcher.tscn" id="5_lquwl"]
 [ext_resource type="Script" uid="uid://bh2ojwyx7ja2h" path="res://scripts/spectator_stream.gd" id="6_kek77"]
+[ext_resource type="Script" uid="uid://b0et1ft4lswvn" path="res://scenes/panda_corp/jade_coin.gd" id="7_dg77c"]
+[ext_resource type="PackedScene" uid="uid://b5jiag0odlso6" path="res://scenes/ui/status_panel.tscn" id="10_efxa6"]
 
 [node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat", "subscription_message", "punch_clock")]
 script = ExtResource("1_0xm2m")
@@ -35,10 +38,21 @@ condition = {
 }
 metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
 
+[node name="StreamStatus" type="Node" parent="." unique_id=162539045]
+script = ExtResource("5_4c57u")
+metadata/_custom_type_script = "uid://clf0k2rj32rl2"
+
 [node name="PunchClock" type="Node" parent="." unique_id=2059603987]
 unique_name_in_owner = true
 script = ExtResource("4_272bh")
 metadata/_custom_type_script = "uid://riu72l0b14vv"
+
+[node name="JadeCoin" type="Node" parent="." unique_id=1769218291 node_paths=PackedStringArray("stream_status", "punch_clock")]
+script = ExtResource("7_dg77c")
+stream_status = NodePath("../StreamStatus")
+punch_clock = NodePath("../PunchClock")
+rate = 1
+metadata/_custom_type_script = "uid://b0et1ft4lswvn"
 
 [node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574 node_paths=PackedStringArray("spectator_sub_viewport", "preview")]
 target_viewport = NodePath("../SpectatorSubViewport")
@@ -73,10 +87,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Scenes" parent="Control/HBoxContainer" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
+[node name="SideVBox" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=526814592]
+layout_mode = 2
+
+[node name="Scenes" parent="Control/HBoxContainer/SideVBox" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-scene_parent = NodePath("../../../SpectatorSubViewport")
+size_flags_vertical = 3
+scene_parent = NodePath("../../../../SpectatorSubViewport")
+
+[node name="StatusPanel" parent="Control/HBoxContainer/SideVBox" unique_id=1312458045 node_paths=PackedStringArray("stream_status", "punch_clock", "jade_coin") instance=ExtResource("10_efxa6")]
+layout_mode = 2
+stream_status = NodePath("../../../../StreamStatus")
+punch_clock = NodePath("../../../../PunchClock")
+jade_coin = NodePath("../../../../JadeCoin")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=1578579191]
 layout_mode = 2
