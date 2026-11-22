@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://bh2ojwyx7ja2h" path="res://scripts/spectator_stream.gd" id="6_kek77"]
 [ext_resource type="Script" uid="uid://b0et1ft4lswvn" path="res://scenes/panda_corp/jade_coin.gd" id="7_dg77c"]
 [ext_resource type="PackedScene" uid="uid://b5jiag0odlso6" path="res://scenes/ui/status_panel.tscn" id="10_efxa6"]
+[ext_resource type="Script" uid="uid://c5qbsi31k50id" path="res://scripts/preview_frame.gd" id="11_ycdy4"]
 
 [node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat")]
 script = ExtResource("1_0xm2m")
@@ -51,24 +52,14 @@ stream_status = NodePath("../StreamStatus")
 punch_clock = NodePath("../PunchClock")
 metadata/_custom_type_script = "uid://b0et1ft4lswvn"
 
-[node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574 node_paths=PackedStringArray("spectator_sub_viewport", "preview")]
-target_viewport = NodePath("../SpectatorSubViewport")
+[node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574 node_paths=PackedStringArray("spectator_sub_viewport")]
+target_viewport = NodePath("../Controls/HBoxContainer/CenterVBox/PreviewMargin/PreviewFrame/PreviewViewportContainer/SpectatorSubViewport")
 stream_name = "RooKit"
 target_fps = 60
 script = ExtResource("6_kek77")
-spectator_sub_viewport = NodePath("../SpectatorSubViewport")
-preview = NodePath("../Control/HBoxContainer/VBoxContainer/MarginContainer/Preview")
+spectator_sub_viewport = NodePath("../Controls/HBoxContainer/CenterVBox/PreviewMargin/PreviewFrame/PreviewViewportContainer/SpectatorSubViewport")
 
-[node name="SpectatorSubViewport" type="SubViewport" parent="." unique_id=1629419129]
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(1920, 1080)
-render_target_update_mode = 4
-
-[node name="TTSBot" parent="SpectatorSubViewport" unique_id=689248766 node_paths=PackedStringArray("subscription_message") instance=ExtResource("3_h2yge")]
-subscription_message = NodePath("../../subscription_message")
-
-[node name="Control" type="Control" parent="." unique_id=1932269530]
+[node name="Controls" type="Control" parent="." unique_id=1932269530]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,7 +67,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control" unique_id=365521189]
+[node name="HBoxContainer" type="HBoxContainer" parent="Controls" unique_id=365521189]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -84,30 +75,30 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SideVBox" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=526814592]
+[node name="SideVBox" type="VBoxContainer" parent="Controls/HBoxContainer" unique_id=526814592]
 layout_mode = 2
 
-[node name="SceneSwitcher" parent="Control/HBoxContainer/SideVBox" unique_id=1533124351 node_paths=PackedStringArray("scene_parent", "twitch_chat", "stream_status", "punch_clock", "jade_coin") instance=ExtResource("5_lquwl")]
+[node name="SceneSwitcher" parent="Controls/HBoxContainer/SideVBox" unique_id=1533124351 node_paths=PackedStringArray("scene_parent", "twitch_chat", "stream_status", "punch_clock", "jade_coin") instance=ExtResource("5_lquwl")]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_vertical = 3
-scene_parent = NodePath("../../../../SpectatorSubViewport")
+scene_parent = NodePath("../../CenterVBox/PreviewMargin/PreviewFrame/PreviewViewportContainer/SpectatorSubViewport")
 twitch_chat = NodePath("../../../../TwitchChat")
 stream_status = NodePath("../../../../StreamStatus")
 punch_clock = NodePath("../../../../PunchClock")
 jade_coin = NodePath("../../../../JadeCoin")
 
-[node name="StatusPanel" parent="Control/HBoxContainer/SideVBox" unique_id=1312458045 node_paths=PackedStringArray("stream_status", "punch_clock", "jade_coin") instance=ExtResource("10_efxa6")]
+[node name="StatusPanel" parent="Controls/HBoxContainer/SideVBox" unique_id=1312458045 node_paths=PackedStringArray("stream_status", "punch_clock", "jade_coin") instance=ExtResource("10_efxa6")]
 layout_mode = 2
 stream_status = NodePath("../../../../StreamStatus")
 punch_clock = NodePath("../../../../PunchClock")
 jade_coin = NodePath("../../../../JadeCoin")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=1578579191]
+[node name="CenterVBox" type="VBoxContainer" parent="Controls/HBoxContainer" unique_id=1578579191]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="Control/HBoxContainer/VBoxContainer" unique_id=1202961168]
+[node name="PreviewMargin" type="MarginContainer" parent="Controls/HBoxContainer/CenterVBox" unique_id=1202961168]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -116,12 +107,26 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Preview" type="TextureRect" parent="Control/HBoxContainer/VBoxContainer/MarginContainer" unique_id=1844083776]
+[node name="PreviewFrame" type="Control" parent="Controls/HBoxContainer/CenterVBox/PreviewMargin" unique_id=410868137 node_paths=PackedStringArray("preview_viewport_container", "preview_viewport")]
 layout_mode = 2
-size_flags_horizontal = 3
-expand_mode = 2
-stretch_mode = 5
+script = ExtResource("11_ycdy4")
+preview_viewport_container = NodePath("PreviewViewportContainer")
+preview_viewport = NodePath("PreviewViewportContainer/SpectatorSubViewport")
 
-[node name="TTSController" parent="Control/HBoxContainer/VBoxContainer" unique_id=1650023206 node_paths=PackedStringArray("tts_bot") instance=ExtResource("5_7mycd")]
+[node name="PreviewViewportContainer" type="SubViewportContainer" parent="Controls/HBoxContainer/CenterVBox/PreviewMargin/PreviewFrame" unique_id=1899763390]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="SpectatorSubViewport" type="SubViewport" parent="Controls/HBoxContainer/CenterVBox/PreviewMargin/PreviewFrame/PreviewViewportContainer" unique_id=1629419129]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="TTSBot" parent="Controls/HBoxContainer/CenterVBox/PreviewMargin/PreviewFrame/PreviewViewportContainer/SpectatorSubViewport" unique_id=689248766 node_paths=PackedStringArray("subscription_message") instance=ExtResource("3_h2yge")]
+subscription_message = NodePath("../../../../../../../../subscription_message")
+
+[node name="TTSController" parent="Controls/HBoxContainer/CenterVBox" unique_id=1650023206 node_paths=PackedStringArray("tts_bot") instance=ExtResource("5_7mycd")]
 layout_mode = 2
-tts_bot = NodePath("../../../../SpectatorSubViewport/TTSBot")
+tts_bot = NodePath("../PreviewMargin/PreviewFrame/PreviewViewportContainer/SpectatorSubViewport/TTSBot")

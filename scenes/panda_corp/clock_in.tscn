@@ -165,6 +165,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_kh0sq")
+window = 60
+fill = true
 metadata/_custom_type_script = "uid://vm3l11yof68m"
 
 [node name="JadeCoinLineGraph" type="Control" parent="Graphs" unique_id=1963310277]
@@ -176,6 +178,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_kh0sq")
 line_color = Color(0, 1, 0, 1)
+window = 60
+fill = true
 metadata/_custom_type_script = "uid://vm3l11yof68m"
 
 [connection signal="started" from="PathQueue/ElevatorCheckpoint/DoorOpening" to="ArrowLabel" method="_on_door_opening_started"]

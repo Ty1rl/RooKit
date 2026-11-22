@@ -27,6 +27,7 @@ player = NodePath("../AudioStreamPlayer")
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="TTSQueue" unique_id=1994866821]
 
 [node name="TTSDisplay" type="Node2D" parent="." unique_id=1782285435 node_paths=PackedStringArray("shown_marker", "hidden_marker")]
+visible = false
 z_index = 1
 script = ExtResource("3_owkjq")
 shown_marker = NodePath("ShownMarker")

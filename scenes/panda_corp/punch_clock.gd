@@ -12,6 +12,7 @@ var count: int = 0
 
 var _num_regex := RegEx.new()
 
+#var _time := 0.0
 #var _test_names: Array = ["123456", "12345678", "12345678910", "123456789101112", "1234567891011121314", 
 							#"12345678910111213141516", "123456789101112131415161718", "1234567891011121314151617181920"]
 
@@ -22,9 +23,12 @@ func _ready() -> void:
 
 
 #func _process(_delta: float) -> void:
-	#count += 1
-	#var formated_count := format_count(count)
-	#clock_in.emit(_test_names.pick_random(), formated_count)
+	#_time += _delta
+	#if _time > 1.0:
+		#_time = 0.0
+		#count += 1
+		#var formated_count := format_count(count)
+		#clock_in.emit(_test_names.pick_random(), formated_count)
 
 
 func _on_chat_message_received(chat_message: TwitchChatMessage) -> void:
