@@ -1,5 +1,7 @@
 extends Node2D
 
+signal grabbed
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var user_label: RichTextLabel = $UserLabel
 
@@ -22,3 +24,10 @@ func _ready() -> void:
 func _on_animated_sprite_2d_animation_changed() -> void:
 	if animated_sprite.animation == "enter":
 		user_label.visible = false
+
+
+func _on_grab_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		user_label.visible = true
+		animated_sprite.play("idle")
+		grabbed.emit()

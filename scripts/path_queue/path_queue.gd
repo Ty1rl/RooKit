@@ -6,6 +6,7 @@ extends Path2D
 
 signal active_queue_started
 signal active_queue_emptied
+signal character_released(character: Node2D)
 
 ## Most characters allowed on the path at once.
 @export var max_followers := 12
@@ -94,6 +95,9 @@ func _visit(follower: PathFollower, checkpoint: PathCheckpoint) -> void:
 
 
 func _on_follower_released(follower: PathFollower, checkpoint: PathCheckpoint) -> void:
+	if follower.is_removed:
+		return
+	
 	if checkpoint.despawns_character:
 		_despawn.call_deferred(follower) # Deferred: may fire mid-iteration if the checkpoint has no steps.
 	else:
@@ -119,6 +123,9 @@ func _spawn_next_if_room() -> void:
 	follower.speed = request.speed
 	follower.walk_animation = walk_animation
 	follower.sprite.play(walk_animation)
+
+	if follower.character.has_signal("grabbed"):
+		follower.character.grabbed.connect(_release_follower.bind(follower), CONNECT_ONE_SHOT | CONNECT_DEFERRED)
 	
 	var was_empty := _active.is_empty()
 	_active.append(follower)
@@ -126,7 +133,27 @@ func _spawn_next_if_room() -> void:
 		active_queue_started.emit()
 
 
+func _release_follower(follower: PathFollower) -> void:
+	if follower.is_removed or not _active.has(follower):
+		return
+	for checkpoint in _checkpoints:
+		checkpoint.forget(follower)
+	follower.remove()
+	_active.erase(follower)
+	
+	var character := follower.character
+	character.reparent(get_parent(), true)
+	follower.queue_free()
+	
+	if _active.is_empty():
+		active_queue_emptied.emit()
+	character_released.emit(character)
+
+
 func _despawn(follower: PathFollower) -> void:
+	if not _active.has(follower):
+		return
+	
 	_active.erase(follower)
 	follower.queue_free()
 	if _active.is_empty():

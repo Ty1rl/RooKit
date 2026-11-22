@@ -3,6 +3,10 @@
 [ext_resource type="Script" uid="uid://ba0noporuxi5" path="res://scenes/panda_corp/panda.gd" id="1_nm6pj"]
 [ext_resource type="SpriteFrames" uid="uid://bc02x3uot5rr2" path="res://scenes/panda_corp/assets/panda/panda_frames.tres" id="2_ipbod"]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_207l3"]
+radius = 70.0
+height = 270.0
+
 [node name="Panda" type="Node2D" unique_id=1734696474]
 script = ExtResource("1_nm6pj")
 
@@ -32,4 +36,11 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 2
 
+[node name="GrabArea" type="Area2D" parent="." unique_id=1469734164]
+position = Vector2(18, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea" unique_id=1545136440]
+shape = SubResource("CapsuleShape2D_207l3")
+
 [connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
+[connection signal="input_event" from="GrabArea" to="." method="_on_grab_area_input_event"]

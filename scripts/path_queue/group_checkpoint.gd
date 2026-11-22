@@ -57,6 +57,12 @@ func arrive(follower: PathFollower) -> void:
 		_start()
 
 
+func forget(follower: PathFollower) -> void:
+	_members.erase(follower)
+	if _members.is_empty():
+		_timer.stop()
+
+
 func _start() -> void:
 	if _running:
 		return
@@ -85,7 +91,7 @@ func _start() -> void:
 func _take_turn(member: PathFollower) -> void:
 	if exit_point:
 		await member.walk_to(exit_point.global_position)
-	await play_steps(per_follower, member.sprite)
+	await play_steps(per_follower, member)
 	_turns_left -= 1
 	if _turns_left == 0:
 		_turns_finished.emit()

@@ -29,18 +29,26 @@ func stop_distance(_spacing: float) -> float:
 	return offset
 
 
-## Starts this checkpoint for a follower. Does not block: follower_released is
-## emitted when the follower may leave.
+## Starts this checkpoint for a follower.
+## follower_released is emitted when the follower may leave.
 func arrive(follower: PathFollower) -> void:
-	await play_steps(self, follower.sprite)
+	await play_steps(self, follower)
 	follower_released.emit(follower)
 
 
-## Plays a single CheckpointStep, or every CheckpointStep child of any other node, in order.
-func play_steps(container: Node, character: AnimatedSprite2D = null) -> void:
+## Called when a follower is pulled out of the queue.
+func forget(_follower: PathFollower) -> void:
+	pass
+
+
+func play_steps(container: Node, follower: PathFollower = null) -> void:
+	var character := follower.sprite if follower else null
 	if container is CheckpointStep:
-		await container.play(character)
+		if not (follower and follower.is_removed):
+			await container.play(character)
 	elif container:
 		for child in container.get_children():
+			if follower and follower.is_removed:
+				return
 			if child is CheckpointStep:
 				await child.play(character)

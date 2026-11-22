@@ -9,6 +9,9 @@ var walk_animation: StringName
 var distance := 0.0 # Copy of progress, so comparisons are exact.
 var next_checkpoint := 0
 var is_at_checkpoint := false
+var is_removed := false
+
+var _walk_tween: Tween
 
 
 func _init() -> void:
@@ -30,8 +33,19 @@ func face(dx: float) -> void:
 
 ## Walks the character off the path to a global position, at this follower's speed.
 func walk_to(target: Vector2) -> void:
+	if is_removed:
+		return
 	face(target.x - character.global_position.x)
 	sprite.play(walk_animation)
-	var tween := create_tween()
-	tween.tween_property(character, "global_position", target, character.global_position.distance_to(target) / speed)
-	await tween.finished
+	_walk_tween = create_tween()
+	_walk_tween.tween_property(character, "global_position", target, character.global_position.distance_to(target) / speed)
+	await _walk_tween.finished
+
+
+## Marks this follower as gone and wakes any checkpoint coroutine still waiting on it.
+func remove() -> void:
+	is_removed = true
+	if _walk_tween and _walk_tween.is_running():
+		_walk_tween.kill()
+		_walk_tween.finished.emit() # kill() doesn't emit it, so the await in walk_to would hang.
+	sprite.animation_finished.emit() # Same for a step awaiting this character's animation.
