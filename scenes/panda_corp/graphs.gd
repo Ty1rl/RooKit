@@ -1,5 +1,8 @@
 extends Control
 
+@export var stream_status: StreamStatus
+@export var jade_coin: JadeCoin
+
 @onready var veiwer_line_graph: LineGraph = $VeiwerLineGraph
 @onready var jade_coin_line_graph: LineGraph = $JadeCoinLineGraph
 
@@ -8,10 +11,6 @@ var jade_x: int = 0
 
 
 func _ready() -> void:
-	var main: Node = get_tree().current_scene
-	var stream_status: StreamStatus = main.stream_status
-	var jade_coin: JadeCoin = main.jade_coin
-	
 	stream_status.stream_stats_updated.connect(_on_stream_stats_updated)
 	jade_coin.updated.connect(_on_jade_coin_updated)
 

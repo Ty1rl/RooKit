@@ -1,6 +1,17 @@
 extends ItemList
 
 @export var scene_parent: Node
+@export var twitch_chat: TwitchChat
+@export var stream_status: StreamStatus
+@export var punch_clock: PunchClock
+@export var jade_coin: JadeCoin
+
+@onready var dependencies := {
+	&"twitch_chat": twitch_chat,
+	&"punch_clock": punch_clock,
+	&"stream_status": stream_status,
+	&"jade_coin": jade_coin,
+}
 
 var scenes: Dictionary[StringName,String] = {
 	&"Clock-in" : "uid://b2fq8v2ed247x",
@@ -18,8 +29,7 @@ func _ready() -> void:
 		add_item(scene_name)
 	
 	select(0)
-	active_scene = load(scenes.get(&"Clock-in")).instantiate()
-	scene_parent.add_child(active_scene)
+	_switch_to(get_item_text(0))
 
 
 func _on_item_selected(index: int) -> void:
@@ -27,11 +37,18 @@ func _on_item_selected(index: int) -> void:
 		printerr("SceneSwitcher: scene parent not set")
 		return
 	
-	var selected_name: StringName = get_item_text(index)
+	_switch_to(get_item_text(index))
+
+func _switch_to(scene_name: StringName) -> void:
+	if active_scene:
+		active_scene.queue_free()
 	
-	active_scene.queue_free()
+	active_scene = load(scenes[scene_name]).instantiate()
 	
-	active_scene = load(scenes.get(selected_name)).instantiate()
+	for key in dependencies:
+		if key in active_scene:
+			active_scene.set(key, dependencies[key])
+	
 	scene_parent.add_child(active_scene)
 
 

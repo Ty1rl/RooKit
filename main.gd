@@ -1,12 +1,6 @@
 extends Node
 
-signal chat_connected(twitch_chat: TwitchChat)
-
 @export var twitch_chat: TwitchChat
-@export var subscription_message: TwitchEventListener
-@export var stream_status: StreamStatus
-@export var punch_clock: PunchClock
-@export var jade_coin: JadeCoin
 
 
 func _ready() -> void:
@@ -41,5 +35,4 @@ func _connect_chat(twitch_user: TwitchUser) -> void:
 	twitch_chat.broadcaster_user = twitch_user
 	await twitch_chat.subscribe()
 	
-	chat_connected.emit(twitch_chat)
 	print("Twitch chat connected.")

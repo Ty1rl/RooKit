@@ -1,7 +1,7 @@
 class_name TTSBot
 extends Node
 
-@export var main: Node
+@export var subscription_message: TwitchEventListener
 @export var queue: TTSQueue
 @export var display: TTSDisplay
 
@@ -14,11 +14,11 @@ extends Node
 
 
 func _ready() -> void:
-	if not main:
-		printerr("TTSBot: main not set")
+	if not subscription_message:
+		printerr("TTSBot: subscription_message not set")
 		return
 	
-	main.subscription_message.received.connect(_on_subscription_message)
+	subscription_message.received.connect(_on_subscription_message)
 	
 	queue.message_started.connect(display.show_message)
 	queue.message_finished.connect(_on_message_finished)

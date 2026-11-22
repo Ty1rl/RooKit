@@ -13,13 +13,9 @@
 [ext_resource type="Script" uid="uid://b0et1ft4lswvn" path="res://scenes/panda_corp/jade_coin.gd" id="7_dg77c"]
 [ext_resource type="PackedScene" uid="uid://b5jiag0odlso6" path="res://scenes/ui/status_panel.tscn" id="10_efxa6"]
 
-[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat", "subscription_message", "stream_status", "punch_clock", "jade_coin")]
+[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat")]
 script = ExtResource("1_0xm2m")
 twitch_chat = NodePath("TwitchChat")
-subscription_message = NodePath("subscription_message")
-stream_status = NodePath("StreamStatus")
-punch_clock = NodePath("PunchClock")
-jade_coin = NodePath("JadeCoin")
 
 [node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_ig7tw")]
 
@@ -44,8 +40,9 @@ metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
 script = ExtResource("5_4c57u")
 metadata/_custom_type_script = "uid://clf0k2rj32rl2"
 
-[node name="PunchClock" type="Node" parent="." unique_id=2059603987]
+[node name="PunchClock" type="Node" parent="." unique_id=2059603987 node_paths=PackedStringArray("twitch_chat")]
 script = ExtResource("4_272bh")
+twitch_chat = NodePath("../TwitchChat")
 metadata/_custom_type_script = "uid://riu72l0b14vv"
 
 [node name="JadeCoin" type="Node" parent="." unique_id=1769218291 node_paths=PackedStringArray("stream_status", "punch_clock")]
@@ -68,8 +65,8 @@ handle_input_locally = false
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
-[node name="TTSBot" parent="SpectatorSubViewport" unique_id=689248766 node_paths=PackedStringArray("main") instance=ExtResource("3_h2yge")]
-main = NodePath("../..")
+[node name="TTSBot" parent="SpectatorSubViewport" unique_id=689248766 node_paths=PackedStringArray("subscription_message") instance=ExtResource("3_h2yge")]
+subscription_message = NodePath("../../subscription_message")
 
 [node name="Control" type="Control" parent="." unique_id=1932269530]
 layout_mode = 3
@@ -90,11 +87,15 @@ grow_vertical = 2
 [node name="SideVBox" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=526814592]
 layout_mode = 2
 
-[node name="Scenes" parent="Control/HBoxContainer/SideVBox" unique_id=1533124351 node_paths=PackedStringArray("scene_parent") instance=ExtResource("5_lquwl")]
+[node name="SceneSwitcher" parent="Control/HBoxContainer/SideVBox" unique_id=1533124351 node_paths=PackedStringArray("scene_parent", "twitch_chat", "stream_status", "punch_clock", "jade_coin") instance=ExtResource("5_lquwl")]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_vertical = 3
 scene_parent = NodePath("../../../../SpectatorSubViewport")
+twitch_chat = NodePath("../../../../TwitchChat")
+stream_status = NodePath("../../../../StreamStatus")
+punch_clock = NodePath("../../../../PunchClock")
+jade_coin = NodePath("../../../../JadeCoin")
 
 [node name="StatusPanel" parent="Control/HBoxContainer/SideVBox" unique_id=1312458045 node_paths=PackedStringArray("stream_status", "punch_clock", "jade_coin") instance=ExtResource("10_efxa6")]
 layout_mode = 2
@@ -124,5 +125,3 @@ stretch_mode = 5
 [node name="TTSController" parent="Control/HBoxContainer/VBoxContainer" unique_id=1650023206 node_paths=PackedStringArray("tts_bot") instance=ExtResource("5_7mycd")]
 layout_mode = 2
 tts_bot = NodePath("../../../../SpectatorSubViewport/TTSBot")
-
-[connection signal="chat_connected" from="." to="PunchClock" method="_on_main_chat_connected"]

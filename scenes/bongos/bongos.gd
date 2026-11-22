@@ -1,5 +1,6 @@
 extends Node2D
 
+@export var twitch_chat: TwitchChat
 @export var trigger_string := "rooBongos"
 @export var projectile_scene: PackedScene
 @export var projectile_spawn_point: Marker2D
@@ -10,8 +11,6 @@ extends Node2D
 var _elapsed: float = 0.0
 
 func _ready() -> void:
-	var main: Node = get_tree().current_scene
-	var twitch_chat: TwitchChat = main.twitch_chat
 	twitch_chat.message_received.connect(_on_chat_message_received)
 
 

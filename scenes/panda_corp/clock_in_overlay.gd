@@ -1,5 +1,7 @@
 extends Node2D
 
+@export var punch_clock: PunchClock
+
 @onready var path_queue: PathQueue = $PathQueue
 @onready var count_label: RichTextLabel = %CountLabel
 
@@ -9,8 +11,6 @@ var _tween: Tween
 
 
 func _ready() -> void:
-	var main : Node = get_tree().current_scene
-	var punch_clock : PunchClock = main.punch_clock
 	punch_clock.clock_in.connect(_on_clock_in)
 	
 	count_label.text = punch_clock.format_count(punch_clock.count)

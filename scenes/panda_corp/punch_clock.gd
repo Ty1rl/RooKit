@@ -3,6 +3,7 @@ extends Node
 
 signal clock_in(username: String, count: String)
 
+@export var twitch_chat: TwitchChat
 @export var trigger_string: String = "rooSit"
 
 var seen_chatters: Dictionary[String, bool] = {} # user_id, filler
@@ -17,6 +18,7 @@ var _num_regex := RegEx.new()
 
 func _ready() -> void:
 	_num_regex.compile("(?<!^)(?=(\\d{3})+$)")
+	twitch_chat.message_received.connect(_on_chat_message_received)
 
 
 #func _process(_delta: float) -> void:
@@ -71,7 +73,3 @@ func _seen(user_id: String) -> bool:
 	
 	seen_chatters[user_id] = true
 	return false
-
-
-func _on_main_chat_connected(twitch_chat: TwitchChat) -> void:
-	twitch_chat.message_received.connect(_on_chat_message_received)
