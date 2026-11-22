@@ -8,14 +8,15 @@ signal updated(gained: float, total: float)
 @export var step: float = 0.01
 @export var rate: int = 60
 
-const CONFIG_PATH = "user://jada_coin.cfg"
+const CONFIG_PATH = "user://jade_coin.cfg"
 
 var gained: float = 0
 var total: float = 0
 
 
 func _ready() -> void:
-	_poll_loop()
+	_load_config()
+	_poll_loop.call_deferred() # deferred so graphs have time to connect
 
 
 func _poll_loop() -> void:
@@ -28,9 +29,10 @@ func _update() -> void:
 	gained += step * punch_clock.count
 	total += step * punch_clock.count
 	updated.emit(gained, total)
+	_save_config() 
 
 
-func save_settings() -> void:
+func _save_config() -> void:
 	var config = ConfigFile.new()
 	
 	config.set_value("jade_coin", "total", total)

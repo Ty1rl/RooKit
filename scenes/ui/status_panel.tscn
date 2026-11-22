@@ -12,33 +12,40 @@ layout_mode = 2
 [node name="APILabel" type="Label" parent="VBoxContainer" unique_id=1477673256]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "API: Disconnected"
 
 [node name="StreamLabel" type="Label" parent="VBoxContainer" unique_id=1327949803]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "Stream: Offline"
 
 [node name="ViewersLabel" type="Label" parent="VBoxContainer" unique_id=862389366]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "Viewers: 0"
 
 [node name="ClockinLabel" type="Label" parent="VBoxContainer" unique_id=1477229049]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "Clocked in: 0"
 
 [node name="JadeCoinLabel" type="Label" parent="VBoxContainer" unique_id=699743472]
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "__ JadeCoin ________"
 
 [node name="JadeCoinGainLabel" type="Label" parent="VBoxContainer" unique_id=1196213831]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "Gained: 0"
 
 [node name="JadeCoinTotalLabel" type="Label" parent="VBoxContainer" unique_id=1025405806]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "Total: 0"

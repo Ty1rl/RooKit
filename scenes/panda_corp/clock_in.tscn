@@ -13,6 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://rjf2pydlgn80" path="res://scenes/panda_corp/assets/gate.png" id="9_ag6eu"]
 [ext_resource type="SpriteFrames" uid="uid://ddewm3a8ehwye" path="res://scenes/panda_corp/assets/card_frames.tres" id="10_8aj4y"]
 [ext_resource type="Script" uid="uid://bbs7d7m766ovc" path="res://scenes/panda_corp/arrow_label.gd" id="13_jurgp"]
+[ext_resource type="Script" uid="uid://vm3l11yof68m" path="res://scripts/line_graph.gd" id="14_kh0sq"]
+[ext_resource type="Script" uid="uid://duqca674401wn" path="res://scenes/panda_corp/graphs.gd" id="14_knniy"]
 
 [sub_resource type="Curve2D" id="Curve2D_qfqsj"]
 _data = {
@@ -144,6 +146,36 @@ autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("13_jurgp")
+
+[node name="Graphs" type="Control" parent="." unique_id=523241578]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 675.0
+offset_top = 107.0
+offset_right = 891.0
+offset_bottom = 229.0
+script = ExtResource("14_knniy")
+
+[node name="VeiwerLineGraph" type="Control" parent="Graphs" unique_id=2033343092]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_kh0sq")
+metadata/_custom_type_script = "uid://vm3l11yof68m"
+
+[node name="JadeCoinLineGraph" type="Control" parent="Graphs" unique_id=1963310277]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_kh0sq")
+line_color = Color(0, 1, 0, 1)
+metadata/_custom_type_script = "uid://vm3l11yof68m"
 
 [connection signal="started" from="PathQueue/ElevatorCheckpoint/DoorOpening" to="ArrowLabel" method="_on_door_opening_started"]
 [connection signal="finished" from="PathQueue/ElevatorCheckpoint/DoorClosing" to="ArrowLabel" method="_on_door_closing_finished"]

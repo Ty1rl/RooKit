@@ -16,6 +16,8 @@ func _ready() -> void:
 	stream_status.stream_stats_updated.connect(_on_stream_stats_updated)
 	punch_clock.clock_in.connect(_on_clock_in)
 	jade_coin.updated.connect(_on_jade_coin_updated)
+	
+	jade_coin_total_label.text = "Total: " + str(jade_coin.total)
 
 
 func _on_jade_coin_updated(gained: float, total: float) -> void:

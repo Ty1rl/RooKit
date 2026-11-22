@@ -75,6 +75,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 12
 
 [node name="VSeparator" type="VSeparator" parent="VBoxContainer/MarginContainer2/HBoxContainer2" unique_id=671377527]
 layout_mode = 2
@@ -85,6 +86,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 12
 
 [connection signal="value_changed" from="VBoxContainer/MarginContainer/HBoxContainer/VolumeSlider" to="." method="_on_volume_slider_value_changed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer/HBoxContainer/StopButton" to="." method="_on_stop_button_pressed"]

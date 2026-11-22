@@ -4,7 +4,9 @@ signal chat_connected(twitch_chat: TwitchChat)
 
 @export var twitch_chat: TwitchChat
 @export var subscription_message: TwitchEventListener
+@export var stream_status: StreamStatus
 @export var punch_clock: PunchClock
+@export var jade_coin: JadeCoin
 
 
 func _ready() -> void:

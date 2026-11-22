@@ -13,11 +13,13 @@
 [ext_resource type="Script" uid="uid://b0et1ft4lswvn" path="res://scenes/panda_corp/jade_coin.gd" id="7_dg77c"]
 [ext_resource type="PackedScene" uid="uid://b5jiag0odlso6" path="res://scenes/ui/status_panel.tscn" id="10_efxa6"]
 
-[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat", "subscription_message", "punch_clock")]
+[node name="Main" type="Node" unique_id=269133433 node_paths=PackedStringArray("twitch_chat", "subscription_message", "stream_status", "punch_clock", "jade_coin")]
 script = ExtResource("1_0xm2m")
 twitch_chat = NodePath("TwitchChat")
 subscription_message = NodePath("subscription_message")
+stream_status = NodePath("StreamStatus")
 punch_clock = NodePath("PunchClock")
+jade_coin = NodePath("JadeCoin")
 
 [node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_ig7tw")]
 
@@ -43,7 +45,6 @@ script = ExtResource("5_4c57u")
 metadata/_custom_type_script = "uid://clf0k2rj32rl2"
 
 [node name="PunchClock" type="Node" parent="." unique_id=2059603987]
-unique_name_in_owner = true
 script = ExtResource("4_272bh")
 metadata/_custom_type_script = "uid://riu72l0b14vv"
 
@@ -51,7 +52,6 @@ metadata/_custom_type_script = "uid://riu72l0b14vv"
 script = ExtResource("7_dg77c")
 stream_status = NodePath("../StreamStatus")
 punch_clock = NodePath("../PunchClock")
-rate = 1
 metadata/_custom_type_script = "uid://b0et1ft4lswvn"
 
 [node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574 node_paths=PackedStringArray("spectator_sub_viewport", "preview")]

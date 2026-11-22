@@ -4,7 +4,7 @@ extends Node
 signal stream_stats_updated(stats: Dictionary)
 signal stream_stats_error(message: String)
 
-const POLL_INTERVAL: float = 10.0
+@export var poll_rate: int = 60
 
 var twitch_api: TwitchAPI
 var current_user_id: String
@@ -22,7 +22,7 @@ func _ready() -> void:
 		return
 	
 	current_user_id = user.id
-	current_user_id = "40934651"
+	#current_user_id = "40934651"
 	
 	_poll_loop()
 
@@ -30,7 +30,7 @@ func _ready() -> void:
 func _poll_loop() -> void:
 	while is_inside_tree():
 		await refresh_stream_stats()
-		await get_tree().create_timer(POLL_INTERVAL).timeout
+		await get_tree().create_timer(poll_rate).timeout
 
 
 func refresh_stream_stats() -> void:
