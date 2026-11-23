@@ -28,6 +28,14 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_207l3"]
+normal = Vector2(0, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_207l3"]
+size = Vector2(1920, 84)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_opyow"]
+
 [node name="ClockIn" type="Node2D" unique_id=979434531]
 script = ExtResource("1_fgdc2")
 
@@ -121,6 +129,25 @@ texture = ExtResource("9_ag6eu")
 position = Vector2(850, 850)
 sprite_frames = ExtResource("10_8aj4y")
 animation = &"gone"
+
+[node name="Ceiling" type="StaticBody2D" parent="." unique_id=435893180]
+position = Vector2(960, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceiling" unique_id=2039163434]
+shape = SubResource("WorldBoundaryShape2D_207l3")
+
+[node name="TopFloor" type="StaticBody2D" parent="." unique_id=1790496757]
+position = Vector2(959, 473)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopFloor" unique_id=637685129]
+shape = SubResource("RectangleShape2D_207l3")
+one_way_collision = true
+
+[node name="BottomFloor" type="StaticBody2D" parent="." unique_id=1756700362]
+position = Vector2(960, 1080)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomFloor" unique_id=706175271]
+shape = SubResource("WorldBoundaryShape2D_opyow")
 
 [node name="CountLabel" type="RichTextLabel" parent="." unique_id=901241458]
 unique_name_in_owner = true

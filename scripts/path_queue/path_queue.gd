@@ -6,7 +6,6 @@ extends Path2D
 
 signal active_queue_started
 signal active_queue_emptied
-signal character_released(character: Node2D)
 
 ## Most characters allowed on the path at once.
 @export var max_followers := 12
@@ -140,14 +139,11 @@ func _release_follower(follower: PathFollower) -> void:
 		checkpoint.forget(follower)
 	follower.remove()
 	_active.erase(follower)
-	
-	var character := follower.character
-	character.reparent(get_parent(), true)
+	follower.character.reparent(get_parent(), true)
 	follower.queue_free()
 	
 	if _active.is_empty():
 		active_queue_emptied.emit()
-	character_released.emit(character)
 
 
 func _despawn(follower: PathFollower) -> void:

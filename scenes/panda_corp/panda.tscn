@@ -7,8 +7,15 @@
 radius = 70.0
 height = 270.0
 
-[node name="Panda" type="Node2D" unique_id=1734696474]
+[node name="Panda" type="RigidBody2D" unique_id=1397282205]
+lock_rotation = true
+freeze = true
 script = ExtResource("1_nm6pj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=863169662]
+position = Vector2(18, 0)
+shape = SubResource("CapsuleShape2D_207l3")
+disabled = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1207780915]
 sprite_frames = ExtResource("2_ipbod")
@@ -36,11 +43,18 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 2
 
+[node name="GroundRay" type="RayCast2D" parent="." unique_id=716347451]
+position = Vector2(18, 118)
+
 [node name="GrabArea" type="Area2D" parent="." unique_id=1469734164]
 position = Vector2(18, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea" unique_id=1545136440]
 shape = SubResource("CapsuleShape2D_207l3")
 
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1657234142]
+rect = Rect2(-53, -136, 142, 272)
+
 [connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
 [connection signal="input_event" from="GrabArea" to="." method="_on_grab_area_input_event"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]

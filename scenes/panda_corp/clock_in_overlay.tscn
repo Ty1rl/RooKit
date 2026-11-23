@@ -16,6 +16,8 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_207l3"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_207l3"]
 bg_color = Color(0.1254902, 0.15686275, 0.1882353, 1)
 border_width_left = 2
@@ -111,6 +113,12 @@ position = Vector2(927, 983)
 scale = Vector2(0.5, 0.5)
 sprite_frames = ExtResource("10_bast6")
 animation = &"gone"
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=1795473766]
+position = Vector2(960, 1080)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=788185103]
+shape = SubResource("WorldBoundaryShape2D_207l3")
 
 [node name="Panel" type="Panel" parent="." unique_id=902410363]
 offset_left = 1594.0
