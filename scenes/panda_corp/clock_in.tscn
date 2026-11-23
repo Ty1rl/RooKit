@@ -1,12 +1,14 @@
 [gd_scene format=3 uid="uid://b2fq8v2ed247x"]
 
 [ext_resource type="Script" uid="uid://dfgbs52nyx6h" path="res://scenes/panda_corp/clock_in.gd" id="1_fgdc2"]
-[ext_resource type="SpriteFrames" uid="uid://cbittj2fhjkhg" path="res://scenes/panda_corp/assets/BG_V2.gif" id="2_fgdc2"]
+[ext_resource type="Texture2D" uid="uid://dhui7wm267ocg" path="res://scenes/panda_corp/assets/graph_board.png" id="2_m4cbt"]
 [ext_resource type="SpriteFrames" uid="uid://ddgy2mwld3eew" path="res://scenes/panda_corp/assets/beast_chase.gif" id="3_8s4qr"]
 [ext_resource type="Script" uid="uid://cpill1ocutq1d" path="res://scenes/panda_corp/beast_chase.gd" id="3_jurgp"]
 [ext_resource type="Texture2D" uid="uid://dsenafu1m6qgg" path="res://scenes/panda_corp/assets/fence.png" id="3_qfqsj"]
 [ext_resource type="SpriteFrames" uid="uid://b4pa5rbh08tks" path="res://scenes/panda_corp/assets/elevator_frames.tres" id="4_jurgp"]
+[ext_resource type="Texture2D" uid="uid://3c6gyngqa47x" path="res://scenes/panda_corp/assets/rooJade.png" id="5_ag6eu"]
 [ext_resource type="Script" uid="uid://bk0nn067acjqp" path="res://scripts/path_queue/path_queue.gd" id="5_kh0sq"]
+[ext_resource type="SpriteFrames" uid="uid://dpooq4nji5f8k" path="res://scenes/panda_corp/assets/BG_V3.gif" id="5_qsxnq"]
 [ext_resource type="Script" uid="uid://cc1fd2d4ru0cq" path="res://scripts/path_queue/path_checkpoint.gd" id="6_knniy"]
 [ext_resource type="Script" uid="uid://bg1dkxaucw4kg" path="res://scripts/path_queue/checkpoint_step.gd" id="7_m4cbt"]
 [ext_resource type="Script" uid="uid://b0tk6q0smjjb2" path="res://scripts/path_queue/group_checkpoint.gd" id="8_qsxnq"]
@@ -39,9 +41,91 @@ size = Vector2(1920, 84)
 [node name="ClockIn" type="Node2D" unique_id=979434531]
 script = ExtResource("1_fgdc2")
 
+[node name="GraphBoard" type="Sprite2D" parent="." unique_id=1882926480]
+position = Vector2(960, 540)
+texture = ExtResource("2_m4cbt")
+
+[node name="Graphs" type="Control" parent="." unique_id=523241578]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = 604.0
+offset_top = 84.0
+offset_right = 1104.0
+offset_bottom = 279.0
+script = ExtResource("14_knniy")
+
+[node name="VeiwerLineGraph" type="Control" parent="Graphs" unique_id=2033343092]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_kh0sq")
+window = 60
+fill = true
+metadata/_custom_type_script = "uid://vm3l11yof68m"
+
+[node name="JadeCoinLineGraph" type="Control" parent="Graphs" unique_id=1963310277]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_kh0sq")
+line_color = Color(0, 1, 0, 1)
+window = 60
+fill = true
+metadata/_custom_type_script = "uid://vm3l11yof68m"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Graphs" unique_id=1653266704]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+
+[node name="TextureRect" type="TextureRect" parent="Graphs/HBoxContainer" unique_id=1184544952]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("5_ag6eu")
+expand_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Graphs/HBoxContainer" unique_id=2108134878]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JadeCoinTotal" type="RichTextLabel" parent="Graphs/HBoxContainer/VBoxContainer" unique_id=1367746640]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 1, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/bold_font_size = 32
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="JadeCoinGain" type="RichTextLabel" parent="Graphs/HBoxContainer/VBoxContainer" unique_id=1630104958]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 1, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
 [node name="Background" type="AnimatedSprite2D" parent="." unique_id=1200349466]
 position = Vector2(960, 540)
-sprite_frames = ExtResource("2_fgdc2")
+sprite_frames = ExtResource("5_qsxnq")
 autoplay = "default"
 
 [node name="BeastChase" type="Path2D" parent="." unique_id=737303046]
@@ -56,10 +140,6 @@ loop = false
 [node name="BeastChaseSprite" type="AnimatedSprite2D" parent="BeastChase/BeastChaseFollow" unique_id=193375020]
 sprite_frames = ExtResource("3_8s4qr")
 autoplay = "default"
-
-[node name="Fence" type="Sprite2D" parent="." unique_id=133460768]
-position = Vector2(960, 540)
-texture = ExtResource("3_qfqsj")
 
 [node name="Elevator" type="AnimatedSprite2D" parent="." unique_id=1216334478]
 position = Vector2(1660, 810)
@@ -121,6 +201,10 @@ sprite = NodePath("../../../Elevator")
 animation = &"closing"
 metadata/_custom_type_script = "uid://bg1dkxaucw4kg"
 
+[node name="Fence" type="Sprite2D" parent="." unique_id=133460768]
+position = Vector2(960, 540)
+texture = ExtResource("3_qfqsj")
+
 [node name="Gate" type="Sprite2D" parent="." unique_id=864183510]
 position = Vector2(1022, 839)
 texture = ExtResource("9_ag6eu")
@@ -173,41 +257,6 @@ autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("13_jurgp")
-
-[node name="Graphs" type="Control" parent="." unique_id=523241578]
-unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 0
-offset_left = 675.0
-offset_top = 107.0
-offset_right = 891.0
-offset_bottom = 229.0
-script = ExtResource("14_knniy")
-
-[node name="VeiwerLineGraph" type="Control" parent="Graphs" unique_id=2033343092]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("14_kh0sq")
-window = 60
-fill = true
-metadata/_custom_type_script = "uid://vm3l11yof68m"
-
-[node name="JadeCoinLineGraph" type="Control" parent="Graphs" unique_id=1963310277]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("14_kh0sq")
-line_color = Color(0, 1, 0, 1)
-window = 60
-fill = true
-metadata/_custom_type_script = "uid://vm3l11yof68m"
 
 [connection signal="started" from="PathQueue/ElevatorCheckpoint/DoorOpening" to="ArrowLabel" method="_on_door_opening_started"]
 [connection signal="finished" from="PathQueue/ElevatorCheckpoint/DoorClosing" to="ArrowLabel" method="_on_door_closing_finished"]
