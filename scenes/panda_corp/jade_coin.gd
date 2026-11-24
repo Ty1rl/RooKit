@@ -9,6 +9,9 @@ signal updated(gained: float, total: float)
 @export var rate: int = 60
 
 const CONFIG_PATH = "user://jade_coin.cfg"
+const MAX_HISTORY := 60
+
+var history := PackedVector2Array()
 
 var gained: float = 0
 var total: float = 0
@@ -28,8 +31,13 @@ func _poll_loop() -> void:
 func _update() -> void:
 	gained += step * punch_clock.count
 	total += step * punch_clock.count
+	
+	history.append(Vector2(Time.get_ticks_msec() / (1000.0 * rate), total))
+	if history.size() > MAX_HISTORY:
+		history.remove_at(0)
+	
 	updated.emit(gained, total)
-	_save_config() 
+	_save_config()
 
 
 func _save_config() -> void:

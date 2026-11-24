@@ -14,6 +14,7 @@ extends ItemList
 }
 
 var scenes: Dictionary[StringName,String] = {
+	&"Blank" : "",
 	&"Clock-in" : "uid://b2fq8v2ed247x",
 	&"Clock-in Overlay" : "uid://brcxplrppn8u5",
 	&"Bongos" : "uid://0s23bgajhsy0"
@@ -28,8 +29,8 @@ func _ready() -> void:
 	for scene_name in scenes.keys():
 		add_item(scene_name)
 	
-	select(0)
-	_switch_to(get_item_text(0))
+	select(1)
+	_switch_to(get_item_text(1))
 
 
 func _on_item_selected(index: int) -> void:
@@ -37,7 +38,13 @@ func _on_item_selected(index: int) -> void:
 		printerr("SceneSwitcher: scene parent not set")
 		return
 	
-	_switch_to(get_item_text(index))
+	var scene_name := get_item_text(index)
+	if scene_name == &"Blank":
+		active_scene.queue_free()
+		active_scene = null
+	else:
+		_switch_to(scene_name)
+
 
 func _switch_to(scene_name: StringName) -> void:
 	if active_scene:

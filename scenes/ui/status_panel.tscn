@@ -31,7 +31,7 @@ text = "Viewers: 0"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-text = "Clocked in: 0"
+text = "Clocked In: 0"
 
 [node name="JadeCoinLabel" type="Label" parent="VBoxContainer" unique_id=699743472]
 layout_mode = 2

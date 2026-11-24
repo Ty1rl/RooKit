@@ -26,7 +26,7 @@ func _on_jade_coin_updated(gained: float, total: float) -> void:
 
 
 func _on_clock_in(_username: String, _count: String) -> void:
-	clockin_label.text = "Clocked in: " + str(punch_clock.count)
+	clockin_label.text = "Clocked In: " + str(punch_clock.count)
 
 
 func _on_stream_stats_updated(stats: Dictionary) -> void:

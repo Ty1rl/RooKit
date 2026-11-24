@@ -39,7 +39,6 @@ metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
 
 [node name="StreamStatus" type="Node" parent="." unique_id=162539045]
 script = ExtResource("5_4c57u")
-poll_rate = 1
 metadata/_custom_type_script = "uid://clf0k2rj32rl2"
 
 [node name="PunchClock" type="Node" parent="." unique_id=2059603987 node_paths=PackedStringArray("twitch_chat")]
@@ -51,7 +50,6 @@ metadata/_custom_type_script = "uid://riu72l0b14vv"
 script = ExtResource("7_dg77c")
 stream_status = NodePath("../StreamStatus")
 punch_clock = NodePath("../PunchClock")
-rate = 1
 metadata/_custom_type_script = "uid://b0et1ft4lswvn"
 
 [node name="SpectatorStreamExporter" type="SpectatorStreamExporter" parent="." unique_id=1362369574 node_paths=PackedStringArray("spectator_sub_viewport")]

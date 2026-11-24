@@ -6,6 +6,10 @@ signal stream_stats_error(message: String)
 
 @export var poll_rate: int = 60
 
+const MAX_HISTORY := 60
+
+var viewer_history := PackedVector2Array()
+
 var twitch_api: TwitchAPI
 var current_user_id: String
 
@@ -22,6 +26,7 @@ func _ready() -> void:
 		return
 	
 	current_user_id = user.id
+	current_user_id = "23257020"
 	#current_user_id = "40972890"
 	
 	_poll_loop()
@@ -66,6 +71,10 @@ func refresh_stream_stats() -> void:
 		stats["game_name"] = stream.get("game_name", "")
 		stats["started_at"] = stream.get("started_at", "")
 		stats["stream_id"] = stream.get("id", "")
+	
+	viewer_history.append(Vector2(Time.get_ticks_msec() / (1000.0 * poll_rate), stats["viewer_count"]))
+	if viewer_history.size() > MAX_HISTORY:
+		viewer_history.remove_at(0)
 	
 	stream_stats_updated.emit(stats)
 
