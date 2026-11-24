@@ -26,7 +26,6 @@ func _ready() -> void:
 		return
 	
 	current_user_id = user.id
-	current_user_id = "23257020"
 	#current_user_id = "40972890"
 	
 	_poll_loop()
